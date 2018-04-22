@@ -1,15 +1,17 @@
 package ltu.course.mobile.project.greenerfootballcup.utilities;
 
+import java.util.Date;
+
 public class LoginDatas {
     private static final LoginDatas ourInstance = new LoginDatas();
 
-    static LoginDatas getInstance() {
+    public static LoginDatas getInstance() {
         return ourInstance;
     }
 
     private boolean initialized;
 
-    private short year;
+    private Date year;
     private String adminCode;
     private String emailAddress;
 
@@ -17,7 +19,7 @@ public class LoginDatas {
         initialized = false;
     }
 
-    public void Initialize(short year, String adminCode, String emailAddress)
+    public void Initialize(Date year, String adminCode, String emailAddress)
     {
         this.year = year;
         this.adminCode = adminCode;
@@ -29,7 +31,7 @@ public class LoginDatas {
         return initialized;
     }
 
-    public short getYear() {
+    public Date getYear() {
         return year;
     }
 
