@@ -1,5 +1,6 @@
 package ltu.course.mobile.project.greenerfootballcup.utilities;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class LoginDatas {
@@ -17,6 +18,7 @@ public class LoginDatas {
 
     private LoginDatas() {
         initialized = false;
+        year = Calendar.getInstance().getTime();
     }
 
     public void Initialize(Date year, String adminCode, String emailAddress)
