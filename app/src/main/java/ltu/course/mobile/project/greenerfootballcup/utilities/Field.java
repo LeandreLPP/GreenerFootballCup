@@ -9,18 +9,23 @@ public class Field {
     private String fullName;
     private String urlArgument;
 
-    public Field(String fullName, String urlArgument)
+    public Field(String urlArgument)
     {
-        this.fullName = fullName;
         this.urlArgument = urlArgument;
+        fullName = urlArgument.replaceAll("%20", " ").trim();
 
-        Pattern nameFind = Pattern.compile("(\\w+)-manna");
-        Matcher m = nameFind.matcher(fullName);
-        this.displayName = m.group(0).trim();
+        if(fullName.contains("-manna"))
+            displayName = fullName.substring(0,fullName.indexOf("-manna")).trim();
+        else
+            displayName = fullName;
     }
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     public String getUrlArgument() {
