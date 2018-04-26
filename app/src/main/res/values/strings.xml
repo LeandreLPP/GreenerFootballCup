@@ -2,5 +2,4 @@
     <string name="app_name">Greener Football Cup</string>
 
     <string name="title_field_activity">Select the football field</string>
-    <string name="page_load_error">Could not load the HTML page.</string>
 </resources>
