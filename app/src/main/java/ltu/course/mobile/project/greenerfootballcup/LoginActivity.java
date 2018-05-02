@@ -1,5 +1,6 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -76,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                         btnToScreen2.setEnabled(false);
                 }else{
                     LoginDatas.getInstance().setAdminCode(confirm_admin_Code.getText().toString());
+                    confirm_admin_Code.setError(null);
                     if(LoginDatas.getInstance().isInitialized())
                         btnToScreen2.setEnabled(true);
                 }
@@ -102,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         btnToScreen2.setEnabled(false);
                 }else{
                     LoginDatas.getInstance().setAdminCode(confirm_admin_Code.getText().toString());
+                    confirm_admin_Code.setError(null);
                     if(LoginDatas.getInstance().isInitialized())
                         btnToScreen2.setEnabled(true);
                 }
@@ -129,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                         btnToScreen2.setEnabled(false);
                 }else{
                     LoginDatas.getInstance().setEmailAddress(confirm_admin_email.getText().toString());
+                    confirm_admin_email.setError(null);
                     if(LoginDatas.getInstance().isInitialized())
                         btnToScreen2.setEnabled(true);
                 }
@@ -155,6 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                         btnToScreen2.setEnabled(false);
                 }else{
                     LoginDatas.getInstance().setEmailAddress(confirm_admin_email.getText().toString());
+                    confirm_admin_email.setError(null);
                     if(LoginDatas.getInstance().isInitialized())
                         btnToScreen2.setEnabled(true);
                 }
@@ -163,6 +168,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        btnToScreen2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
+                startActivity(myIntent);
             }
         });
     }
