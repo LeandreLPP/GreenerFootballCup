@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Greener Football Cup</string>
+    <string name="login_screen_title">Welcome to the cup management system</string>
+    <string name="current_year">Enter the current year</string>
+    <string name="admin_code">Enter admin code</string>
+    <string name="confirm_admin_code">Confirm admin code</string>
+    <string name="admin_email">Enter admin’s e-mail to send reports to</string>
+    <string name="confirm_admin_email">Confirm admin’s e-mail</string>
+    <string name="btnToScreen2">Let\'s go !</string>
 </resources>
