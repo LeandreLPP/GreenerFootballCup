@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!confirm_admin_Code.getText().toString().equals(admin_code.getText().toString())){
-                    LoginDatas.getInstance().setEmailAddress(null);
+                    LoginDatas.getInstance().setAdminCode(null);
                     confirm_admin_Code.setError("admin code error");
                     if(btnToScreen2.isEnabled())
                         btnToScreen2.setEnabled(false);
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!confirm_admin_Code.getText().toString().equals(admin_code.getText().toString())){
-                    LoginDatas.getInstance().setEmailAddress(null);
+                    LoginDatas.getInstance().setAdminCode(null);
                     confirm_admin_Code.setError("admin code error");
                     if(btnToScreen2.isEnabled())
                         btnToScreen2.setEnabled(false);
