@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
         btnToScreen2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
+                Intent myIntent = new Intent(getApplicationContext(), TeamActivity.class);
                 startActivity(myIntent);
             }
         });
