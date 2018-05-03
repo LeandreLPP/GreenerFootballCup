@@ -32,14 +32,11 @@ public class ParserHTML {
         return Jsoup.connect(url).get();
     }
 
-    public static Field[] extractFields(Document htmlDoc) throws WrongDocumentException {
-        return new Field[0];
+    public static Field[] extractFields(Document htmlDoc) {
     }
 
-    public static Match[] extractMatches(Document htmlDoc) throws WrongDocumentException {
+    public static Match[] extractMatches(Document htmlDoc) {
         return new Match[0];
     }
 
-    public class WrongDocumentException extends Exception {
-    }
 }

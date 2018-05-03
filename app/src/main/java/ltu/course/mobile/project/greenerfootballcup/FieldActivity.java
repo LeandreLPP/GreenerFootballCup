@@ -1,16 +1,24 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
@@ -26,13 +34,14 @@ public class FieldActivity extends AppCompatActivity {
 
     public static final int GRID_LAYOUT_WIDTH = 4;
     public static final String FIELD_ARGUMENT_ID = "FIELD";
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1234;
 
     private ConstraintLayout loadingLayout;
     private TextView loadingText;
     private ProgressBar progressBar;
     private GridLayout fieldGridLayout;
-    private ScrollView scrollView;
-
+    private Handler handlerActivity;
+    private LoadViewAsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +51,11 @@ public class FieldActivity extends AppCompatActivity {
         loadingLayout = findViewById(R.id.loadingLayout);
         loadingText = findViewById(R.id.loadingText);
         progressBar = findViewById(R.id.progressBar);
-        scrollView = findViewById(R.id.scrollView);
         fieldGridLayout = findViewById(R.id.fieldGridLayout);
 
-        (new LoadViewAsyncTask()).execute();
+        handlerActivity = new Handler();
+        task = new LoadViewAsyncTask();
+        task.execute();
     }
 
     /**
@@ -82,7 +92,7 @@ public class FieldActivity extends AppCompatActivity {
     /**
      * Select a field and pass its URL argument to the Match activity with
      *
-     * @param field
+     * @param field The field selected
      */
     private void selectField(Field field) {
         Intent intent = new Intent(this, MatchActivity.class);
@@ -93,13 +103,12 @@ public class FieldActivity extends AppCompatActivity {
     /**
      * Sort alphabetically the Fields and split them into sublist for each letter.
      *
-     * @see Field
-     *
      * @param fields The array of fields to sort and split.
      * @return A list of sublist containing the Fields sorted and split up.
+     * @see Field
      */
     public static List<List<Field>> sortAndSplitFieldList(Field[] fields) {
-        List<Field> firstSort = new ArrayList<Field>(Arrays.asList(fields));
+        List<Field> firstSort = new ArrayList<>(Arrays.asList(fields));
         firstSort.sort(Comparator.comparing(Field::getFullName));
 
         List<List<Field>> ret = new ArrayList<>();
@@ -120,93 +129,107 @@ public class FieldActivity extends AppCompatActivity {
         return ret;
     }
 
+    private synchronized void checkInternetConnection() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    private boolean isInternetEnabled() {
-        return false;
+        boolean connected = cm != null && cm.getActiveNetworkInfo() != null;
+        if (!connected)
+        {
+            RequirePermissionDialogFragment dialogFragment = new RequirePermissionDialogFragment();
+            dialogFragment.show(getFragmentManager(), "need_internet");
+        }
     }
 
-    private class LoadViewAsyncTask extends AsyncTask<Void, Progress, Boolean>
-    {
+    public static class RequirePermissionDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.need_internet_message)
+                   .setPositiveButton(R.string.ok, (dialog, id) -> ActivityCompat.requestPermissions(
+                           getActivity(),
+                           new String[]{Manifest.permission.INTERNET},
+                           MY_PERMISSIONS_REQUEST_READ_CONTACTS));
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
+
+    private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Result> {
         private List<List<Field>> fieldList;
 
         @Override
         protected void onPreExecute() {
-            if(!isInternetEnabled())
-                this.cancel(true);
             loadingLayout.setOnClickListener(null);
-            loadingText.setText("Loading, please wait...");
-            loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
+            loadingText.setText(R.string.loading);
+            loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
             progressBar.setEnabled(true);
             progressBar.setProgress(0);
-            progressBar.setMax(4);
+            progressBar.setMax(5);
         }
 
         @Override
-        protected void onProgressUpdate(Progress... progress) {
-            loadingText.setText(progress[0].getText());
-            progressBar.setProgress(progress[0].getProgress());
+        protected void onProgressUpdate(Integer... progress) {
+            progressBar.setProgress(progress[0]);
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
-            boolean success = false;
+        protected Result doInBackground(Void... voids) {
+            Result result = new Result();
+            result.success = false;
             try
             {
-                publishProgress(new Progress("Compiling URL...", 0));
+                publishProgress(0);
+                handlerActivity.post(FieldActivity.this::checkInternetConnection);
+                publishProgress(1);
                 String docUrl = ParserHTML.getURLofAllMatches(LoginDatas.getInstance().getYear());
-                publishProgress(new Progress("Retrieving HTML page...", 1));
+                publishProgress(2);
                 Document allMatchesPage = ParserHTML.getHTMLDocument(docUrl);
-                publishProgress(new Progress("Extracting information...", 2));
+                publishProgress(3);
                 Field[] fields = ParserHTML.extractFields(allMatchesPage);
-                publishProgress(new Progress("Sorting fields...", 3));
+                publishProgress(4);
                 fieldList = sortAndSplitFieldList(fields);
-                publishProgress(new Progress("Building UI...", 4));
-                success = true;
+                publishProgress(5);
+                result.success = true;
             }
-            catch (Exception e)
-            { }
-            return success;
+            catch (HttpStatusException httpException)
+            {
+                result.errorMessage = getString(R.string.website_down_error);
+            }
+            catch (Exception ignored)
+            {
+                result.errorMessage = getString(R.string.loading_failed);
+            }
+            return result;
         }
 
         @Override
-        protected void onPostExecute(Boolean success) {
-            if(success)
+        protected void onPostExecute(Result result) {
+            if (result.success)
             {
                 loadingLayout.setOnClickListener(null);
                 loadingLayout.setVisibility(ConstraintLayout.INVISIBLE);
                 fillGridLayout(fieldList);
             }
-            else displayError();
+            else displayError(result.errorMessage);
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            displayError();
+            displayError(getString(R.string.loading_failed));
         }
 
-        protected void displayError(){
-            loadingLayout.setOnClickListener((c)->(new LoadViewAsyncTask()).execute());
-            loadingText.setText("Could not load the list of play fields.\nTouch to retry.");
-            loadingText.setTextColor(getResources().getColor(R.color.colorTextError,null));
+        void displayError(String errorMessage) {
+            loadingLayout.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
+            loadingText.setText(errorMessage);
+            loadingText.setTextColor(getResources().getColor(R.color.colorTextError, null));
             progressBar.setEnabled(false);
         }
     }
-    private class Progress {
-        private String text;
-        private int progress;
 
-        private Progress(String text, int progress) {
-            this.text = text;
-            this.progress = progress;
-        }
-
-        public int getProgress() {
-            return progress;
-        }
-
-        public String getText() {
-            return text;
-        }
+    private static class Result{
+        public String errorMessage;
+        public boolean success;
     }
 }
