@@ -1,11 +1,22 @@
 <resources>
     <string name="app_name">Greener Football Cup</string>
-
     <string name="title_field_activity">Select the football field</string>
     <string name="need_internet_title">This App needs internet</string>
     <string name="need_internet_message">This application needs internet to recover information from the teamplaycup website.\nPlease connect your device to the network and retry.</string>
     <string name="loading">Loading, please wait...</string>
     <string name="loading_failed">Loading failed.\nTouch to retry.</string>
     <string name="ok">OK</string>
+	
     <string name="website_down_error">Failed to access the \"teamplaycup.se\" website.\nTouch to retry.</string>
+    <string name="login_screen_title">Welcome to the cup management system</string>
+    <string name="team_screen_title">Configure your team</string>
+
+    <string name="current_year">Enter the current year</string>
+    <string name="admin_code">Enter admin code</string>
+    <string name="confirm_admin_code">Confirm admin code</string>
+    <string name="admin_email">Enter admin’s e-mail to send reports to</string>
+    <string name="confirm_admin_email">Confirm admin’s e-mail</string>
+    <string name="btnToScreen2">Let\'s go !</string>
+
+    <string name="btnAdminAccess">Admin Access</string>
 </resources>
