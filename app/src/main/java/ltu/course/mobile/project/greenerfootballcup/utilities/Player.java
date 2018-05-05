@@ -36,4 +36,9 @@ public class Player {
         this.selected = selected;
     }
 
+    public int getYear(){
+        String tmp = age.substring(0,1);
+        return Integer.parseInt(tmp);
+    }
+
 }

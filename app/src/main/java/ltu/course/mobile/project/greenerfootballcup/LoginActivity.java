@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 
 public class LoginActivity extends AppCompatActivity {
@@ -49,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                     if(btnToScreen2.isEnabled())
                         btnToScreen2.setEnabled(false);
                 }else{
-                    LoginDatas.getInstance().setYear(current_year.getText().toString());
+                    LoginDatas.getInstance().setYear(new Date(Integer.parseInt(current_year.getText().toString()),0,0));
                     if(LoginDatas.getInstance().isInitialized())
                         btnToScreen2.setEnabled(true);
                 }
