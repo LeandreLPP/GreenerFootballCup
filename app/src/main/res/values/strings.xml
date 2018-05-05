@@ -11,5 +11,14 @@
     <string name="btnToScreen2">Let\'s go !</string>
 
     <string name="btnAdminAccess">Admin Access</string>
+    <string name="btnResetSignature">Reset signature</string>
+    <string name="btnConfirm">Confirm</string>
+    <string name="btnCancel">Cancel</string>
+    <string name="toastWrongAdminCode">Wrong admin code</string>
+    <string name="signatureFileName">/signature.png"</string>
+
+    <string name="maxOlderPlayerOvershoot">You can select no more than two ten-year-old players</string>
+    <string name="maxPlayerOvershoot">Too many players selected</string>
+    <string name="notEnoughPlayers">You must select players</string>
 
 </resources>
