@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,7 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
 
 public class TeamActivity extends AppCompatActivity {
 
+    private MediaPlayer mMediaPlayer;
 
     private String url = "http://teamplaycup.se/cup/?team&home=kurirenspelen/17&scope=A-2&name=Notvikens%20IK" ;
     private ListView playerList;
@@ -79,16 +81,26 @@ public class TeamActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( (adminAccess && !team.maxPlayerOvershoot()) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot())){
+                if( team.getNumberPlayer() > 0 && ((adminAccess && !team.maxPlayerOvershoot()) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot()))){
+                    releaseMediaPlayer();
                     Intent myIntent = new Intent(getApplicationContext(), ReportActivity.class);
                     startActivity(myIntent);
+                }else {
+                    if (team.maxPlayerOvershoot())
+                        Toast.makeText(getApplicationContext(), R.string.maxPlayerOvershoot, Toast.LENGTH_SHORT).show();
+                    else if (!adminAccess && team.maxOlderPlayerOvershoot())
+                        Toast.makeText(getApplicationContext(), R.string.maxOlderPlayerOvershoot, Toast.LENGTH_SHORT).show();
+                    else if (team.getNumberPlayer() == 0)
+                        Toast.makeText(getApplicationContext(), R.string.notEnoughPlayers, Toast.LENGTH_SHORT).show();
+                    if(mMediaPlayer == null)
+                        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.error_sound);
+                    else if (mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.stop();
+                        mMediaPlayer.release();
+                        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.error_sound);
+                    }
+                    mMediaPlayer.start();
                 }
-                else if(team.maxPlayerOvershoot()){
-                    Toast.makeText(getApplicationContext(),R.string.maxPlayerOvershoot,Toast.LENGTH_SHORT).show();
-                }else if(!adminAccess && team.maxOlderPlayerOvershoot()){
-                    Toast.makeText(getApplicationContext(),R.string.maxOlderPlayerOvershoot,Toast.LENGTH_SHORT).show();
-                }else if(team.getNumberPlayer() == 0)
-                    Toast.makeText(getApplicationContext(),R.string.notEnoughPlayers,Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -242,5 +254,11 @@ public class TeamActivity extends AppCompatActivity {
 
     }
 
+    private void releaseMediaPlayer(){
+        if(mMediaPlayer != null){
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
 
+    }
 }
