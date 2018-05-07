@@ -1,5 +1,6 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -41,14 +42,13 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.PlayerAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
 
-public class TeamActivity extends AppCompatActivity {
+public class TeamActivity extends Activity{
 
     private MediaPlayer mMediaPlayer;
 
     private String url = "http://teamplaycup.se/cup/?team&home=kurirenspelen/17&scope=A-2&name=Notvikens%20IK" ;
     private ListView playerList;
-    private List<Player> players;
-    private Document document;
+    private Player[] players;
     private PlayerAdapter playerAdapter;
     private Button btnConfirm;
     private ImageView preview_signature;
@@ -64,7 +64,7 @@ public class TeamActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
 
-        players = new ArrayList<>();
+        players = null;
         team = new Team();
         adminAccess = false;
 
@@ -122,49 +122,8 @@ public class TeamActivity extends AppCompatActivity {
     }
 
     public void GetPlayers(){
-        final ParsePlayers parsePlayers = new ParsePlayers();
+        ParsePlayers parsePlayers = new ParsePlayers();
         parsePlayers.execute();
-    }
-
-    private class ParsePlayers extends AsyncTask<String, Long, Void> {
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            try {
-                document = ParserHTML.getHTMLDocument(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Get all hearders
-            Elements allH3headers = document.select("h3");
-            Element playerHeader = null;
-            //Find the right header
-            for (Element header : allH3headers) {
-                if (header.text().equals("Spelare")) {
-                    playerHeader = header;
-                    break;
-                }
-            }
-
-            //Get all the players
-            Elements tablePlayers = playerHeader.nextElementSibling().select("table").select("tbody").select("tr");
-
-            //Parse name and age
-            for (Element player : tablePlayers) {
-                Elements data = player.select("td");
-                players.add(new Player(data.get(0).text(),data.get(1).text()));
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            playerAdapter = new PlayerAdapter(getApplicationContext(), players,team);
-            playerList.setAdapter(playerAdapter);
-        }
     }
 
     private void OpenPopupAdminAccess() {
@@ -260,5 +219,27 @@ public class TeamActivity extends AppCompatActivity {
             mMediaPlayer = null;
         }
 
+    }
+
+    private class ParsePlayers extends AsyncTask<String, Long, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                Document html = ParserHTML.getHTMLDocument(url);
+                players = ParserHTML.extractPlayers(html);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParserHTML.WrongDocumentException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            playerAdapter = new PlayerAdapter(getApplicationContext(), players, team);
+            playerList.setAdapter(playerAdapter);
+        }
     }
 }
