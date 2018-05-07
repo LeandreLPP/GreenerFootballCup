@@ -16,11 +16,11 @@ import ltu.course.mobile.project.greenerfootballcup.R;
 
 public class PlayerAdapter extends BaseAdapter {
     Context context;
-    List<Player> players;
+    Player[] players;
     LayoutInflater inflter;
     Team team;
 
-    public PlayerAdapter(Context applicationContext, List<Player> players, Team team) {
+    public PlayerAdapter(Context applicationContext, Player[] players, Team team) {
         this.context = applicationContext;
         this.players = players;
         this.team = team;
@@ -29,12 +29,12 @@ public class PlayerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return players.size();
+        return players.length;
     }
 
     @Override
     public Object getItem(int i) {
-        return players.get(i);
+        return players[i];
     }
 
     @Override
