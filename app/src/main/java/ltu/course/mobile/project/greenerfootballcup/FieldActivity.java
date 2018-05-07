@@ -113,12 +113,12 @@ public class FieldActivity extends AppCompatActivity {
 
         List<List<Field>> ret = new ArrayList<>();
         ret.add(new ArrayList<>());
-        int i = 0;
-        char c = firstSort.get(0).getDisplayName().charAt(0);
+        int i = -1;
+        char c = ' ';
         for (Field f : firstSort)
         {
             char c1 = f.getDisplayName().charAt(0);
-            if (c1 != c)
+            if (i == -1 || c1 != c)
             {
                 i++;
                 ret.add(new ArrayList<>());
@@ -187,6 +187,11 @@ public class FieldActivity extends AppCompatActivity {
                 Document allMatchesPage = ParserHTML.getHTMLDocument(docUrl);
                 publishProgress(3);
                 Field[] fields = ParserHTML.extractFields(allMatchesPage);
+                if(fields.length <= 0)
+                {
+                    result.errorMessage = getString(R.string.no_field_error);
+                    return result;
+                }
                 publishProgress(4);
                 fieldList = sortAndSplitFieldList(fields);
                 publishProgress(5);
@@ -196,7 +201,7 @@ public class FieldActivity extends AppCompatActivity {
             {
                 result.errorMessage = getString(R.string.website_down_error);
             }
-            catch (Exception ignored)
+            catch (Exception e)
             {
                 result.errorMessage = getString(R.string.loading_failed);
             }
