@@ -108,8 +108,14 @@ public class FieldActivity extends AppCompatActivity {
      * @see Field
      */
     public static List<List<Field>> sortAndSplitFieldList(Field[] fields) {
-        List<Field> firstSort = new ArrayList<>(Arrays.asList(fields));
-        firstSort.sort(Comparator.comparing(Field::getFullName));
+        List<Field> firstSort = new ArrayList<>();
+        for(Field f : fields)
+        {
+            int i = 0;
+            while(i<firstSort.size() && f.getFullName().compareTo(firstSort.get(i).getFullName()) > 0)
+                i++;
+            firstSort.add(i,f);
+        }
 
         List<List<Field>> ret = new ArrayList<>();
         ret.add(new ArrayList<>());
@@ -162,7 +168,7 @@ public class FieldActivity extends AppCompatActivity {
         protected void onPreExecute() {
             loadingLayout.setOnClickListener(null);
             loadingText.setText(R.string.loading);
-            loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
+            loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             progressBar.setEnabled(true);
             progressBar.setProgress(0);
             progressBar.setMax(5);
@@ -228,7 +234,7 @@ public class FieldActivity extends AppCompatActivity {
         void displayError(String errorMessage) {
             loadingLayout.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
             loadingText.setText(errorMessage);
-            loadingText.setTextColor(getResources().getColor(R.color.colorTextError, null));
+            loadingText.setTextColor(getResources().getColor(R.color.colorTextError));
             progressBar.setEnabled(false);
         }
     }
