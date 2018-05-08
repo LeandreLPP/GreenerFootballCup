@@ -67,6 +67,7 @@ public class TeamActivity extends Activity{
 
     private Team team;
     private boolean adminAccess;
+    private boolean signed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class TeamActivity extends Activity{
         players = null;
         team = new Team();
         adminAccess = false;
+        signed = false;
 
         playerList = (ListView)findViewById(R.id.players);
         playerList.setVisibility(View.INVISIBLE);
@@ -91,45 +93,35 @@ public class TeamActivity extends Activity{
 
 
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if( team.getNumberPlayer() > 0 && ((adminAccess && !team.maxPlayerOvershoot()) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot()))){
-                    releaseMediaPlayer();
-                    Intent myIntent = new Intent(getApplicationContext(), ReportActivity.class);
-                    startActivity(myIntent);
-                }else {
-                    if (team.maxPlayerOvershoot())
-                        Toast.makeText(getApplicationContext(), R.string.maxPlayerOvershoot, Toast.LENGTH_SHORT).show();
-                    else if (!adminAccess && team.maxOlderPlayerOvershoot())
-                        Toast.makeText(getApplicationContext(), R.string.maxOlderPlayerOvershoot, Toast.LENGTH_SHORT).show();
-                    else if (team.getNumberPlayer() == 0)
-                        Toast.makeText(getApplicationContext(), R.string.notEnoughPlayers, Toast.LENGTH_SHORT).show();
-                    if(mMediaPlayer == null)
-                        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.error_sound);
-                    else if (mMediaPlayer.isPlaying()) {
-                        mMediaPlayer.stop();
-                        mMediaPlayer.release();
-                        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.error_sound);
-                    }
-                    mMediaPlayer.start();
+        btnConfirm.setOnClickListener(v -> {
+            if( team.getNumberPlayer() > 0 && ((adminAccess && !team.maxPlayerOvershoot()) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot())) && signed){
+                releaseMediaPlayer();
+                Intent myIntent = new Intent(getApplicationContext(), ReportActivity.class);
+                startActivity(myIntent);
+            }else {
+                if (team.maxPlayerOvershoot())
+                    Toast.makeText(getApplicationContext(), R.string.maxPlayerOvershoot, Toast.LENGTH_SHORT).show();
+                else if (!adminAccess && team.maxOlderPlayerOvershoot())
+                    Toast.makeText(getApplicationContext(), R.string.maxOlderPlayerOvershoot, Toast.LENGTH_SHORT).show();
+                else if (team.getNumberPlayer() == 0)
+                    Toast.makeText(getApplicationContext(), R.string.notEnoughPlayers, Toast.LENGTH_SHORT).show();
+                else if(!signed)
+                    Toast.makeText(getApplicationContext(), R.string.notSigned, Toast.LENGTH_SHORT).show();
+
+                if(mMediaPlayer == null)
+                    mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.error_sound);
+                else if (mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.stop();
+                    mMediaPlayer.release();
+                    mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.error_sound);
                 }
+                mMediaPlayer.start();
             }
         });
 
-        btnAdminAccess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenPopupAdminAccess();
-            }
-        });
+        btnAdminAccess.setOnClickListener(v -> OpenPopupAdminAccess());
 
-        preview_signature.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenPopupSignature();
-            }
-        });
+        preview_signature.setOnClickListener(v -> OpenPopupSignature());
 
         GetPlayers();
     }
@@ -195,17 +187,24 @@ public class TeamActivity extends Activity{
         confirm_signature.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
-                        Bitmap bitmap = drawingView.getBitmap();
-                        saveSignature(bitmap);
-                        preview_signature.setImageBitmap(bitmap);
-                        popupWindow.dismiss();
-                        popupWindow=null;
+                try{
+                    Bitmap bitmap = drawingView.getBitmap();
+                    saveSignature(bitmap);
+                    preview_signature.setImageBitmap(bitmap);
+                    popupWindow.dismiss();
+                    popupWindow=null;
+                }catch (DrawingView.NullSignatureException e){
+                    Toast.makeText(getApplicationContext(), R.string.notSigned, Toast.LENGTH_SHORT).show();
+                    signed = false;
+                }
+
             }});
 
         reset_signature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawingView.clearDrawing();
+                signed = false;
             }
         });
 
@@ -218,6 +217,7 @@ public class TeamActivity extends Activity{
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.flush();
             out.close();
+            signed = true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

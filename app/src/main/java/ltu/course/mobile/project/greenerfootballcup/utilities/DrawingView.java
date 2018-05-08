@@ -69,16 +69,25 @@ public class DrawingView  extends View {
 
     public void clearDrawing() {
         clearCanvas = true;
-        invalidate();;
+        invalidate();
     }
 
-    public Bitmap getBitmap()
-    {
-        this.setDrawingCacheEnabled(true);
-        this.buildDrawingCache();
-        Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
-        this.setDrawingCacheEnabled(false);
-        return bmp;
+    public Bitmap getBitmap() throws NullSignatureException {
+        if(mPath.isEmpty()){
+            throw new NullSignatureException();
+        }else{
+            this.setDrawingCacheEnabled(true);
+            this.buildDrawingCache();
+            Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
+            this.setDrawingCacheEnabled(false);
+            return bmp;
+        }
+    }
+
+    public class NullSignatureException extends Exception{
+        public NullSignatureException(){
+            super("NullSignatureException");
+        }
     }
 
 }

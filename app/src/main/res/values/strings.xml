@@ -29,5 +29,6 @@
     <string name="maxOlderPlayerOvershoot">You can select no more than two ten-year-old players</string>
     <string name="maxPlayerOvershoot">Too many players selected</string>
     <string name="notEnoughPlayers">You must select players</string>
+    <string name="notSigned">You must sign</string>
 
 </resources>
