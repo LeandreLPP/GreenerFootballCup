@@ -1,9 +1,15 @@
 <resources>
     <string name="app_name">Greener Football Cup</string>
     <string name="title_field_activity">Select the football field</string>
+    <string name="title_report_activity">Generate the report</string>
     <string name="need_internet_title">This App needs internet</string>
     <string name="need_internet_message">This application needs internet to recover information from the teamplaycup website.\nPlease connect your device to the network and retry.</string>
     <string name="ok">OK</string>
+
+    <string name="title_result_image">Scan of the results</string>
+    <string name="title_fair_play_image">Scan of the fair play results</string>
+    <string name="title_report_image">Generated report</string>
+    <string name="button_send_report">Send the report</string>
 
     <string name="loading">Loading, please wait...</string>
     <string name="loading_failed">Loading failed.\nTouch to retry.</string>
