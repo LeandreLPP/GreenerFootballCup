@@ -31,4 +31,8 @@
     <string name="notEnoughPlayers">You must select players</string>
     <string name="notSigned">You must sign</string>
 
+    <string name="cancel_year">Cancel</string>
+    <string name="confirm_year">Confirm</string>
+    <string name="title_year_picker">Select a year</string>
+
 </resources>

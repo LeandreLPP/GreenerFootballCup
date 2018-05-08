@@ -30,7 +30,8 @@
         android:id="@+id/current_year"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="date" />
+        android:clickable="true"
+        android:inputType="none" />
 
     <TextView
         android:layout_width="wrap_content"
