@@ -8,6 +8,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +22,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -36,11 +41,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.DrawingView;
+import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.PlayerAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class TeamActivity extends Activity{
 
@@ -53,7 +60,9 @@ public class TeamActivity extends Activity{
     private Button btnConfirm;
     private ImageView preview_signature;
     private Button btnAdminAccess;
+    private LoadingView loadingView;
 
+    private Handler handlerActivity;
     private PopupWindow popupWindow;
 
     private Team team;
@@ -69,9 +78,13 @@ public class TeamActivity extends Activity{
         adminAccess = false;
 
         playerList = (ListView)findViewById(R.id.players);
+        playerList.setVisibility(View.INVISIBLE);
         preview_signature = (ImageView) findViewById(R.id.preview_signature);
         btnConfirm = (Button)findViewById(R.id.btnConfirm);
         btnAdminAccess = (Button)findViewById(R.id.btnAdminAccess);
+        loadingView = findViewById(R.id.loadingView);
+        loadingView.setMaxProgress(3);
+        handlerActivity = new Handler();
 
         View header = (View)getLayoutInflater().inflate(R.layout.player_list_header,null);
         playerList.addHeaderView(header);
@@ -122,7 +135,7 @@ public class TeamActivity extends Activity{
     }
 
     public void GetPlayers(){
-        ParsePlayers parsePlayers = new ParsePlayers();
+        LoadViewAsyncTask parsePlayers = new LoadViewAsyncTask();
         parsePlayers.execute();
     }
 
@@ -221,25 +234,63 @@ public class TeamActivity extends Activity{
 
     }
 
-    private class ParsePlayers extends AsyncTask<String, Long, Void> {
+    private class LoadViewAsyncTask extends AsyncTask<String, Integer, Utilities.Result> {
 
         @Override
-        protected Void doInBackground(String... strings) {
-            try {
-                Document html = ParserHTML.getHTMLDocument(url);
-                players = ParserHTML.extractPlayers(html);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParserHTML.WrongDocumentException e) {
-                e.printStackTrace();
-            }
-            return null;
+        protected void onPreExecute() {
+            loadingView.setOnClickListener(null);
+            loadingView.setLoadingText(R.string.loading);
         }
 
         @Override
-        protected void onPostExecute(Void result) {
-            playerAdapter = new PlayerAdapter(getApplicationContext(), players, team);
-            playerList.setAdapter(playerAdapter);
+        protected void onProgressUpdate(Integer... progress) {
+            loadingView.updateBar(progress[0]);
+        }
+
+        @Override
+        protected Utilities.Result doInBackground(String... strings) {
+            Utilities.Result result = new Utilities.Result();
+            result.success = false;
+            try {
+                publishProgress(0);
+                handlerActivity.post(() -> {
+                    Utilities.checkInternetConnection(TeamActivity.this);
+                });
+                publishProgress(1);
+                Document html = ParserHTML.getHTMLDocument(url);
+                publishProgress(2);
+                players = ParserHTML.extractPlayers(html);
+                publishProgress(3);
+                result.success = true;
+            }
+            catch (HttpStatusException httpException)
+                {
+                    result.errorMessage = getString(R.string.website_down_error);
+                }
+            catch (Exception e)
+                {
+                    result.errorMessage = getString(R.string.loading_failed);
+                }
+                return result;
+        }
+
+        @Override
+        protected void onPostExecute(Utilities.Result result) {
+            if (result.success) {
+                playerAdapter = new PlayerAdapter(getApplicationContext(), players, team);
+                playerList.setAdapter(playerAdapter);
+                playerList.setVisibility(View.VISIBLE);
+                loadingView.setVisibility(View.INVISIBLE);
+            }else{
+                loadingView.displayError(result.errorMessage);
+                loadingView.setOnClickListener((c) -> (new LoadViewAsyncTask()).execute());
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            loadingView.displayError(getString(R.string.loading_failed));
         }
     }
 }

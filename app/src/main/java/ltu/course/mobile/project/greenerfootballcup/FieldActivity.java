@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ProgressBar;
@@ -27,18 +28,20 @@ import java.util.Comparator;
 import java.util.List;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingPopup;
+import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
+import ltu.course.mobile.project.greenerfootballcup.utilities.RequirePermissionDialogFragment;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class FieldActivity extends AppCompatActivity {
 
     public static final int GRID_LAYOUT_WIDTH = 4;
     public static final String FIELD_ARGUMENT_ID = "FIELD";
-    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1234;
 
-    private ConstraintLayout loadingLayout;
-    private TextView loadingText;
-    private ProgressBar progressBar;
+    private LoadingView loadingView;
+
     private GridLayout fieldGridLayout;
     private Handler handlerActivity;
     private LoadViewAsyncTask task;
@@ -48,10 +51,10 @@ public class FieldActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_field);
 
-        loadingLayout = findViewById(R.id.loadingLayout);
-        loadingText = findViewById(R.id.loadingText);
-        progressBar = findViewById(R.id.progressBar);
         fieldGridLayout = findViewById(R.id.fieldGridLayout);
+        fieldGridLayout.setVisibility(View.INVISIBLE);
+        loadingView = findViewById(R.id.loadingView);
+        loadingView.setMaxProgress(5);
 
         handlerActivity = new Handler();
         task = new LoadViewAsyncTask();
@@ -135,58 +138,31 @@ public class FieldActivity extends AppCompatActivity {
         return ret;
     }
 
-    private synchronized void checkInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        boolean connected = cm != null && cm.getActiveNetworkInfo() != null;
-        if (!connected)
-        {
-            RequirePermissionDialogFragment dialogFragment = new RequirePermissionDialogFragment();
-            dialogFragment.show(getFragmentManager(), "need_internet");
-        }
-    }
 
-    public static class RequirePermissionDialogFragment extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.need_internet_message)
-                   .setPositiveButton(R.string.ok, (dialog, id) -> ActivityCompat.requestPermissions(
-                           getActivity(),
-                           new String[]{Manifest.permission.INTERNET},
-                           MY_PERMISSIONS_REQUEST_READ_CONTACTS));
-            // Create the AlertDialog object and return it
-            return builder.create();
-        }
-    }
 
-    private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Result> {
+    private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Utilities.Result> {
         private List<List<Field>> fieldList;
 
         @Override
         protected void onPreExecute() {
-            loadingLayout.setOnClickListener(null);
-            loadingText.setText(R.string.loading);
-            loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            progressBar.setEnabled(true);
-            progressBar.setProgress(0);
-            progressBar.setMax(5);
+            loadingView.setOnClickListener(null);
+            loadingView.setLoadingText(R.string.loading);
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            progressBar.setProgress(progress[0]);
+            loadingView.updateBar(progress[0]);
         }
 
         @Override
-        protected Result doInBackground(Void... voids) {
-            Result result = new Result();
+        protected Utilities.Result doInBackground(Void... voids) {
+            Utilities.Result result = new Utilities.Result();
             result.success = false;
             try
             {
                 publishProgress(0);
-                handlerActivity.post(FieldActivity.this::checkInternetConnection);
+                handlerActivity.post(() -> { Utilities.checkInternetConnection(FieldActivity.this); });
                 publishProgress(1);
                 String docUrl = ParserHTML.getURLofAllMatches(LoginDatas.getInstance().getYear());
                 publishProgress(2);
@@ -215,32 +191,26 @@ public class FieldActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Result result) {
+        protected void onPostExecute(Utilities.Result result) {
             if (result.success)
             {
-                loadingLayout.setOnClickListener(null);
-                loadingLayout.setVisibility(ConstraintLayout.INVISIBLE);
                 fillGridLayout(fieldList);
+                loadingView.setVisibility(View.INVISIBLE);
+                fieldGridLayout.setVisibility(View.VISIBLE);
             }
-            else displayError(result.errorMessage);
+            else{
+                loadingView.displayError(result.errorMessage);
+                loadingView.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
+            }
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            displayError(getString(R.string.loading_failed));
+            loadingView.displayError(getString(R.string.loading_failed));
         }
 
-        void displayError(String errorMessage) {
-            loadingLayout.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
-            loadingText.setText(errorMessage);
-            loadingText.setTextColor(getResources().getColor(R.color.colorTextError));
-            progressBar.setEnabled(false);
-        }
     }
 
-    private static class Result{
-        public String errorMessage;
-        public boolean success;
-    }
+
 }
