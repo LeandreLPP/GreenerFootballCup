@@ -3,13 +3,26 @@ package ltu.course.mobile.project.greenerfootballcup.utilities;
 import java.util.Date;
 
 public class Match {
-    private short number;
+    private String number;
     private String group;
-    private Date time;
+    private String time;
     private Team firstTeam;
     private Team secondTeam;
+    private String groupURL;
 
-    public short getNumber() {
+
+
+    public  Match (String number, String group, String groupURL, String time, Team firstTeam, Team secondTeam){
+        this.number = number;
+        this.group = group;
+        this.groupURL = groupURL;
+        this.time = time;
+        this.firstTeam = firstTeam;
+        this.secondTeam = secondTeam;
+
+    }
+
+    public String getNumber() {
         return number;
     }
 
@@ -17,7 +30,9 @@ public class Match {
         return group;
     }
 
-    public Date getTime() {
+    public String getGroupURL(){return groupURL; }
+
+    public String getTime() {
         return time;
     }
 
