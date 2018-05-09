@@ -62,6 +62,14 @@ public class FieldActivity extends AppCompatActivity {
     }
 
     /**
+     * Avoid to come back to the LoginActivity
+     */
+    @Override
+    public void onBackPressed() {
+        return;
+    }
+
+    /**
      * Fill the central GridLayout with buttons representing the fields.
      *
      * @param fieldList The sorted and split list of the fields to connect to each button.

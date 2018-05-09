@@ -148,7 +148,7 @@ public class TeamActivity extends Activity{
                 {
                     if(admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
                         adminAccess = true;
-                        btnAdminAccess.setBackgroundColor(Color.argb(1,224,224,224));
+                        btnAdminAccess.setBackgroundColor(Color.RED);
                         popupWindow.dismiss();
                         popupWindow=null;
                     }
