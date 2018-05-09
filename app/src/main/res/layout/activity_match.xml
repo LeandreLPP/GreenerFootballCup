@@ -6,14 +6,149 @@
     android:layout_height="match_parent"
     tools:context=".MatchActivity">
 
-    <Button
-        android:id="@+id/button"
+
+ <!--   <ScrollView
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        android:gravity="center"
+        tools:layout_editor_absoluteX="17dp"
+        tools:layout_editor_absoluteY="92dp"
+        android:fillViewport="true"
+        tools:ignore="MissingConstraints">
+
+        <TableLayout
+            android:id="@+id/matchTable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TableRow
+            android:id="@+id/row1"
+            android:background="#607D8B"
+            android:padding="5dp">
+            <TextView
+                android:id="@+id/nr"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Nr"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/group"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Group"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/time"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Time"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/match"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Match"
+                android:layout_weight="7"
+                android:gravity="center"/>
+        </TableRow>
+    </TableLayout>
+    </ScrollView>-->
+
+    <TextView
+        android:id="@+id/nr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Goto team activity"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Nr"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="66dp" />
+
+    <TextView
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Group"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="66dp" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Time"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="118dp"
+        tools:layout_editor_absoluteY="66dp" />
+
+    <TextView
+        android:id="@+id/match"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        android:gravity="center"
+        android:text="Match"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="252dp"
+        tools:layout_editor_absoluteY="66dp" />
+
+    <ListView
+        android:id="@+id/matches"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:padding="5dp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="85dp" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="All matches on Field "
+        android:textColor="#000000"
+        android:textSize="25sp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="5dp" />
+
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register result for this match"
+        tools:layout_editor_absoluteX="62dp"
+        tools:layout_editor_absoluteY="447dp"
+        tools:ignore="MissingConstraints"/>
+
+    <Button
+        android:id="@+id/team2"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:text="Register players of "
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="193dp"
+        tools:layout_editor_absoluteY="362dp" />
+
+    <Button
+        android:id="@+id/team1"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:text="Register players of "
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="7dp"
+        tools:layout_editor_absoluteY="362dp" />
+
+
 </android.support.constraint.ConstraintLayout>
