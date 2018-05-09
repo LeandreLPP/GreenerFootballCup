@@ -1,5 +1,6 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
+
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class MatchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match);
 
+
         TextView title = (TextView)findViewById(R.id.title);
         String FieldName = field.getDisplayName();
         title.setText("All matches for field" + FieldName);
@@ -78,6 +80,7 @@ public class MatchActivity extends AppCompatActivity {
                 //TODO: opens Screen: Register Results
             }
         });
+
 
 
 

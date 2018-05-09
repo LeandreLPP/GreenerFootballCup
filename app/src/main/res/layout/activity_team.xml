@@ -1,9 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TeamActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/team_screen_title"
+        android:textSize="30sp"
+        tools:layout_editor_absoluteX="137dp"
+        tools:layout_editor_absoluteY="45dp" />
+
+
+    <ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView
+        android:id="@+id/loadingView"
+        android:layout_width="match_parent"
+        android:layout_height="334dp"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="18dp" />
+
+    <ListView
+        android:id="@+id/players"
+        android:layout_width="match_parent"
+        android:layout_height="335dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="73dp"
+        android:background="@drawable/border_listview"
+        android:padding="5dp" />
+
+    <ImageView
+        android:id="@+id/preview_signature"
+        android:layout_width="230dp"
+        android:layout_height="74dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="21dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/border_listview"
+        android:padding="5dp"
+        android:scaleType="fitXY"/>
+
+    <Button
+        android:id="@+id/btnAdminAccess"
+        android:layout_width="116dp"
+        android:layout_height="35dp"
+        android:layout_alignTop="@+id/preview_signature"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/preview_signature"
+        android:text="@string/btnAdminAccess"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="116dp"
+        android:layout_height="35dp"
+        android:layout_alignBottom="@+id/preview_signature"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/preview_signature"
+        android:text="@string/btnConfirm"
+        android:textSize="10dp" />
+
+
+
+</RelativeLayout>
