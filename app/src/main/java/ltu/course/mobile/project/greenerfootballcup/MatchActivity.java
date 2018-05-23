@@ -120,8 +120,7 @@ public class MatchActivity extends AppCompatActivity {
             //extract information of each game
             for (Element game : allGames){
                 Elements data = game.select("td");
-                allMatch.add(new Match(data.get(0).text(), data.get(1).text(), data.get(1).attr("href"),
-                                       data.get(2).text(), data.get(3).));
+                //allMatch.add(new Match(data.get(0).text(), data.get(1).text(), data.get(1).attr("href"),data.get(2).text(), data.get(3).text()));
             }
 
 

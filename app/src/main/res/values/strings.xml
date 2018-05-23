@@ -35,4 +35,7 @@
     <string name="confirm_year">Confirm</string>
     <string name="title_year_picker">Select a year</string>
 
+    <string name="title_starting_screen">Welcome to the cup management system</string>
+    <string name="btnStartManaging">Let\'s start !</string>
+
 </resources>
