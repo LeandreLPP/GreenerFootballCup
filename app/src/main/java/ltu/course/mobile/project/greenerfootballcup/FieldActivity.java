@@ -23,16 +23,13 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+
 import java.util.List;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
-import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingPopup;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
-import ltu.course.mobile.project.greenerfootballcup.utilities.RequirePermissionDialogFragment;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class FieldActivity extends AppCompatActivity {

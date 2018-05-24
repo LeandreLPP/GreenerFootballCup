@@ -81,7 +81,7 @@
         android:inputType="textEmailAddress" />
 
     <Button
-        android:id="@+id/btnToScreen2"
+        android:id="@+id/btnToScreen3"
         android:layout_width="291dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

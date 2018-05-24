@@ -38,4 +38,8 @@
     <string name="title_starting_screen">Welcome to the cup management system</string>
     <string name="btnStartManaging">Let\'s start !</string>
 
+    <string name="passwords_do_not_match">The passwords do not match</string>
+    <string name="email_do_not_match">The email addresses do not match</string>
+    <string name="password">password</string>
+    <string name="default_password">default password</string>
 </resources>
