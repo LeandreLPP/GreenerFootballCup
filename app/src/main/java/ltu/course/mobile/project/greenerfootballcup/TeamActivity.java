@@ -49,7 +49,7 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.PlayerAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
-public class TeamActivity extends Activity{
+public class TeamActivity extends AppCompatActivity{
 
     private MediaPlayer mMediaPlayer;
 

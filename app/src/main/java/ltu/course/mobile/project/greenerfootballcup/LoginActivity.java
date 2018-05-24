@@ -1,5 +1,6 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +29,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int minYear = 2000;
     private EditText admin_code ;
-    private EditText confirm_admin_Code;
     private EditText admin_email;
     private EditText confirm_admin_email;
     private EditText current_year;
     private Button btnToScreen3;
+    private Button btnChangePassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +41,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         admin_code = (EditText)findViewById(R.id.admin_code);
-        confirm_admin_Code = (EditText)findViewById(R.id.confirm_admin_code);
         admin_email = (EditText)findViewById(R.id.admin_email);
         confirm_admin_email = (EditText)findViewById(R.id.confirm_admin_email);
         current_year = (EditText)findViewById(R.id.current_year);
         btnToScreen3 = (Button)findViewById(R.id.btnToScreen3);
+        btnChangePassword = (Button)findViewById(R.id.btnChangePassword);
 
         current_year.addTextChangedListener(new TextWatcher() {
             @Override
@@ -150,16 +151,17 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btnToScreen3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
-                    admin_code.setError(getResources().getString(R.string.toastWrongAdminCode));
-                }else{
-                    Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
-                    startActivity(myIntent);
-                }
+        btnToScreen3.setOnClickListener(v -> {
+            if(!admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
+                admin_code.setError(getResources().getString(R.string.toastWrongAdminCode));
+            }else{
+                Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
+                startActivity(myIntent);
             }
+        });
+
+        btnChangePassword.setOnClickListener(v -> {
+            LoginDatas.getInstance().openConfingPassword(LoginActivity.this);
         });
 
     }

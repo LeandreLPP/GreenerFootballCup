@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/starting_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/background"
-    android:id="@+id/starting_layout">
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/logo_starting_screen"
         android:layout_width="match_parent"
-        android:layout_height="93dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="25dp"
         android:scaleType="fitCenter"
         android:src="@drawable/gammelstads_title" />
 
@@ -20,16 +18,16 @@
         android:id="@+id/title_starting_screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
         android:text="@string/title_starting_screen"
         android:textColor="@color/White"
-        android:textSize="30sp"
-        android:layout_centerVertical="true"
-        android:gravity="center_horizontal"/>
+        android:textSize="30sp" />
 
     <Button
+        android:id="@+id/btnToSecondScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnToSecondScreen"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="76dp"
@@ -40,15 +38,14 @@
         android:textSize="30sp" />
 
     <ltu.course.mobile.project.greenerfootballcup.utilities.NewPasswordView
+        android:id="@+id/new_password_screen1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/new_password_screen1"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="invisible">
 
     </ltu.course.mobile.project.greenerfootballcup.utilities.NewPasswordView>
-
 
 
 </RelativeLayout>
