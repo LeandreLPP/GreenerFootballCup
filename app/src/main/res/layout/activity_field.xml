@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FieldActivity">
+    tools:context=".Activities.FieldActivity">
 
     <TextView
         android:id="@+id/titleFieldActivity"
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView
+    <ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView
         android:id="@+id/loadingView"
         android:layout_width="match_parent"
         android:layout_height="457dp"

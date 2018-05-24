@@ -1,6 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup.utilities;
-
-import java.util.Date;
+package ltu.course.mobile.project.greenerfootballcup.utilities.Model;
 
 public class Match {
     private String number;

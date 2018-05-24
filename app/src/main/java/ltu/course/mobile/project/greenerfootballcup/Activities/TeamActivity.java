@@ -1,18 +1,13 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,34 +17,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.DrawingView;
-import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView;
+import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.DrawingView;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Player;
-import ltu.course.mobile.project.greenerfootballcup.utilities.PlayerAdapter;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdapter;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
-public class TeamActivity extends Activity{
+public class TeamActivity extends AppCompatActivity{
 
     private MediaPlayer mMediaPlayer;
 
@@ -148,18 +136,18 @@ public class TeamActivity extends Activity{
                 {
                     if(admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
                         adminAccess = true;
-                        btnAdminAccess.setBackgroundColor(Color.argb(1,224,224,224));
+                        btnAdminAccess.setBackgroundColor(Color.RED);
                         popupWindow.dismiss();
                         popupWindow=null;
                     }
                     else{
                         adminAccess = false;
-                        Toast.makeText(getApplicationContext(),R.string.toastWrongAdminCode,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),R.string.wrongAdminCode,Toast.LENGTH_SHORT).show();
                     }
 
                 }else{
                     adminAccess = false;
-                    Toast.makeText(getApplicationContext(),R.string.toastWrongAdminCode,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),R.string.wrongAdminCode,Toast.LENGTH_SHORT).show();
                 }
             }});
 

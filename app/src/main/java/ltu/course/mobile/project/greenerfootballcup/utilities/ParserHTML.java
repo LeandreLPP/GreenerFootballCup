@@ -16,10 +16,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.List;
+
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 
 
 public class ParserHTML {
