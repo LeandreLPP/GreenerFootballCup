@@ -24,7 +24,7 @@
     <string name="btnResetSignature">Reset signature</string>
     <string name="btnConfirm">Confirm</string>
     <string name="btnCancel">Cancel</string>
-    <string name="toastWrongAdminCode">Wrong admin code</string>
+    <string name="wrongAdminCode">Wrong admin code</string>
     <string name="signatureFileName">/signature.png"</string>
 
     <string name="maxOlderPlayerOvershoot">You can select no more than two ten-year-old players</string>

@@ -19,15 +19,7 @@ public class NewPasswordView extends RelativeLayout {
 
     private EditText et_new_password;
     private EditText et_confirm_new_password;
-    private Button btn_validate_new_password;
-    private Dialog dialog;
-
     public NewPasswordView(Context context) {
-        super(context);
-        initialize();
-    }
-
-    public NewPasswordView(Context context, PopupWindow popupWindow) {
         super(context);
         initialize();
     }
@@ -42,17 +34,10 @@ public class NewPasswordView extends RelativeLayout {
         initialize();
     }
 
-    public void setDialog(Dialog d){
-        dialog = d;
-    }
-
     public void initialize(){
         inflate(getContext(), R.layout.new_password_view, this);
         et_new_password = findViewById(R.id.et_new_password);
         et_confirm_new_password = findViewById(R.id.et_confirm_new_password);
-        btn_validate_new_password = findViewById(R.id.btn_validate_new_password);
-
-
 
 
         et_new_password.addTextChangedListener(new TextWatcher() {
@@ -65,11 +50,8 @@ public class NewPasswordView extends RelativeLayout {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!et_confirm_new_password.getText().toString().equals(et_new_password.getText().toString())){
                     et_confirm_new_password.setError(getResources().getString(R.string.passwords_do_not_match));
-                    if(btn_validate_new_password.isEnabled())
-                        btn_validate_new_password.setEnabled(false);
                 }else{
                     et_confirm_new_password.setError(null);
-                    btn_validate_new_password.setEnabled(true);
                 }
             }
 
@@ -89,11 +71,8 @@ public class NewPasswordView extends RelativeLayout {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!et_confirm_new_password.getText().toString().equals(et_new_password.getText().toString())){
                     et_confirm_new_password.setError(getResources().getString(R.string.passwords_do_not_match));
-                    if(btn_validate_new_password.isEnabled())
-                        btn_validate_new_password.setEnabled(false);
                 }else{
                     et_confirm_new_password.setError(null);
-                    btn_validate_new_password.setEnabled(true);
                 }
             }
 
@@ -103,12 +82,5 @@ public class NewPasswordView extends RelativeLayout {
             }
         });
 
-        btn_validate_new_password.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                LoginDatas.getInstance().setAdminCode(et_new_password.getText().toString());
-                if(dialog != null)
-                    dialog.dismiss();
-            }});
     }
 }

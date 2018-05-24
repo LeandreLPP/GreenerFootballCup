@@ -3,11 +3,15 @@ package ltu.course.mobile.project.greenerfootballcup.utilities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.view.Gravity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.PopupWindow;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.Date;
 
@@ -95,9 +99,78 @@ public class LoginDatas {
         alert.setView(newPasswordView);
         // disallow cancel of AlertDialog on click of back button and outside touch
         alert.setCancelable(false);
+        alert.setPositiveButton(android.R.string.ok, null); //Set to null. We override the onclick
+        alert.setNegativeButton(android.R.string.cancel, null);
 
         AlertDialog dialog = alert.create();
-        newPasswordView.setDialog(dialog);
+
+        EditText et_confirm_new_password = newPasswordView.findViewById(R.id.et_confirm_new_password);
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button btnPositive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                btnPositive.setOnClickListener(view -> {
+                    if(et_confirm_new_password.getError() == null){
+                        LoginDatas.getInstance().setAdminCode(et_confirm_new_password.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
+
+            }
+        });
+        dialog.show();
+    }
+
+    public void openVerifyPassword(Activity activity){
+        LayoutInflater layoutInflater = activity.getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.verify_password_view, null);
+
+        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
+
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(password.getError() != null)
+                    password.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        final AlertDialog dialog = new AlertDialog.Builder(activity).setView(view)
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(view -> {
+                    if(password.getText().toString().equals(getAdminCode())){
+                        dialog.dismiss();
+                        openConfingPassword(activity);
+                    }
+                    else{
+                        password.setError(activity.getResources().getString(R.string.wrongAdminCode));
+                    }
+                });
+            }
+        });
         dialog.show();
     }
 

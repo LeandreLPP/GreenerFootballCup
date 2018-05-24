@@ -1,29 +1,20 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
-import android.widget.PopupWindow;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
-import ltu.course.mobile.project.greenerfootballcup.utilities.NewPasswordView;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -153,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
 
         btnToScreen3.setOnClickListener(v -> {
             if(!admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
-                admin_code.setError(getResources().getString(R.string.toastWrongAdminCode));
+                admin_code.setError(getResources().getString(R.string.wrongAdminCode));
             }else{
                 Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
                 startActivity(myIntent);
@@ -161,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btnChangePassword.setOnClickListener(v -> {
-            LoginDatas.getInstance().openConfingPassword(LoginActivity.this);
+            LoginDatas.getInstance().openVerifyPassword(LoginActivity.this);
         });
 
     }
