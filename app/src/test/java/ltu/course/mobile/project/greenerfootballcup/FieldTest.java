@@ -3,7 +3,7 @@ package ltu.course.mobile.project.greenerfootballcup;
 
 import org.junit.Test;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 
 import static org.junit.Assert.*;
 

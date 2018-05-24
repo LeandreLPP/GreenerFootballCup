@@ -37,7 +37,7 @@
         android:textColor="@color/White"
         android:textSize="30sp" />
 
-    <ltu.course.mobile.project.greenerfootballcup.utilities.NewPasswordView
+    <ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.NewPasswordView
         android:id="@+id/new_password_screen1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         android:layout_centerVertical="true"
         android:visibility="invisible">
 
-    </ltu.course.mobile.project.greenerfootballcup.utilities.NewPasswordView>
+    </ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.NewPasswordView>
 
 
 </RelativeLayout>

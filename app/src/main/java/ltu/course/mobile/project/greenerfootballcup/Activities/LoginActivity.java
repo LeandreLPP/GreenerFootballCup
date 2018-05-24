@@ -1,4 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.NumberPicker;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 
 public class LoginActivity extends AppCompatActivity {

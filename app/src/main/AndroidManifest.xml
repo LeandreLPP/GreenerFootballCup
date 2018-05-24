@@ -17,18 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
-        <activity android:name=".StartingActivity">
+        <activity android:name=".Activities.StartingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".FieldActivity" />
-        <activity android:name=".MatchActivity" />
-        <activity android:name=".TeamActivity" />
-        <activity android:name=".ReportActivity"></activity>
+        <activity android:name=".Activities.LoginActivity" />
+        <activity android:name=".Activities.FieldActivity" />
+        <activity android:name=".Activities.MatchActivity" />
+        <activity android:name=".Activities.TeamActivity" />
+        <activity android:name=".Activities.ReportActivity"></activity>
     </application>
 
 </manifest>

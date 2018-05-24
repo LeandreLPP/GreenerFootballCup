@@ -1,24 +1,13 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
@@ -27,8 +16,9 @@ import java.util.ArrayList;
 
 import java.util.List;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
-import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView;
+import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;

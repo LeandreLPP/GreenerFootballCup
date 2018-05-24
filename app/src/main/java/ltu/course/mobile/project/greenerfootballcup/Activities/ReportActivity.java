@@ -1,8 +1,10 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import ltu.course.mobile.project.greenerfootballcup.R;
 
 public class ReportActivity extends AppCompatActivity {
 

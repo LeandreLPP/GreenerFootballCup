@@ -1,4 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup.utilities;
+package ltu.course.mobile.project.greenerfootballcup.utilities.Model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

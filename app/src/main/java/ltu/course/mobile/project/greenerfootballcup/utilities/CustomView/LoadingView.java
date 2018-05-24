@@ -1,4 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup.utilities;
+package ltu.course.mobile.project.greenerfootballcup.utilities.CustomView;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

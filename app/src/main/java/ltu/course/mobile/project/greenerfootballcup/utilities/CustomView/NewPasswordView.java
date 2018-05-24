@@ -1,4 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup.utilities;
+package ltu.course.mobile.project.greenerfootballcup.utilities.CustomView;
 
 import android.app.Dialog;
 import android.content.Context;

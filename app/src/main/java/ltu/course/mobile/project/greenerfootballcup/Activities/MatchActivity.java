@@ -1,32 +1,26 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Match;
+import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
 
 public class MatchActivity extends AppCompatActivity {
     private Field field;

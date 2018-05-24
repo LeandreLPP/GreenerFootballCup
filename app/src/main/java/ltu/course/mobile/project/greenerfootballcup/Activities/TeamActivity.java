@@ -1,4 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,13 +27,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.DrawingView;
-import ltu.course.mobile.project.greenerfootballcup.utilities.LoadingView;
+import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.DrawingView;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Player;
-import ltu.course.mobile.project.greenerfootballcup.utilities.PlayerAdapter;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Team;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdapter;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class TeamActivity extends AppCompatActivity{

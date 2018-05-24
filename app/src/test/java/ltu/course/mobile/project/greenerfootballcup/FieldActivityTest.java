@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
+import ltu.course.mobile.project.greenerfootballcup.Activities.FieldActivity;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 
 public class FieldActivityTest {
     @Test

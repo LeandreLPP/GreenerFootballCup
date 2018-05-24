@@ -16,6 +16,7 @@ import android.widget.EditText;
 import java.util.Date;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.NewPasswordView;
 
 import static android.content.Context.MODE_PRIVATE;
 

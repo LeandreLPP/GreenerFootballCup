@@ -1,7 +1,6 @@
-package ltu.course.mobile.project.greenerfootballcup.utilities;
+package ltu.course.mobile.project.greenerfootballcup.utilities.Model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Team {
