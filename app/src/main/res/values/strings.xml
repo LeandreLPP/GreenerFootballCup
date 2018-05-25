@@ -36,4 +36,8 @@
     <string name="maxPlayerOvershoot">Too many players selected</string>
     <string name="notEnoughPlayers">You must select players</string>
 
+    <string name="retake_picture">Retake picture</string>
+    <string name="camera_permission_confirmation">You need to take pictures of the result card to generate the report. To do so, this application requires the access rights to the camera.</string>
+    <string name="camera_permission_not_granted">You cannot generate the report without taking pictures of the result card. Please allow access to the camera.</string>
+
 </resources>
