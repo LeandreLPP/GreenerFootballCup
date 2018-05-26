@@ -1,12 +1,19 @@
 package ltu.course.mobile.project.greenerfootballcup.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 
 import org.jsoup.HttpStatusException;
@@ -45,16 +52,25 @@ public class FieldActivity extends AppCompatActivity {
         loadingView.setMaxProgress(5);
 
         handlerActivity = new Handler();
+
         task = new LoadViewAsyncTask();
         task.execute();
     }
 
     /**
-     * Avoid to come back to the LoginActivity
+     * Avoid to come back to the LoginActivity using the back button
      */
     @Override
     public void onBackPressed() {
+        openVerifyPassword();
         return;
+    }
+
+    /**
+     * Use to back to the previous activity
+     */
+    public void backToPreviousActivity(){
+        finish();
     }
 
     /**
@@ -135,8 +151,6 @@ public class FieldActivity extends AppCompatActivity {
     }
 
 
-
-
     private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Utilities.Result> {
         private List<List<Field>> fieldList;
 
@@ -208,5 +222,50 @@ public class FieldActivity extends AppCompatActivity {
 
     }
 
+    public void openVerifyPassword(){
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.verify_password_view, null);
+
+        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
+
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(password.getError() != null)
+                    password.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        final android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this).setView(view)
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+
+            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view1 -> {
+                if(password.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
+                    dialog.dismiss();
+                    backToPreviousActivity();
+                }
+                else{
+                    password.setError(getResources().getString(R.string.wrongAdminCode));
+                }
+            });
+        });
+        dialog.show();
+    }
 
 }

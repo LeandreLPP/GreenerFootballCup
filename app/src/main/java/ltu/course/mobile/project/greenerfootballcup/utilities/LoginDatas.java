@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -107,70 +108,23 @@ public class LoginDatas {
 
         EditText et_confirm_new_password = newPasswordView.findViewById(R.id.et_confirm_new_password);
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        dialog.setOnShowListener(dialogInterface -> {
 
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+            Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            btnPositive.setOnClickListener(view -> {
+                if(et_confirm_new_password.getError() == null && !et_confirm_new_password.getText().toString().equals("")){
+                    LoginDatas.getInstance().setAdminCode(et_confirm_new_password.getText().toString());
+                    dialog.dismiss();
+                }
+            });
 
-                Button btnPositive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                btnPositive.setOnClickListener(view -> {
-                    if(et_confirm_new_password.getError() == null){
-                        LoginDatas.getInstance().setAdminCode(et_confirm_new_password.getText().toString());
-                        dialog.dismiss();
-                    }
-                });
+            Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            btnNegative.setOnClickListener(view -> {
+                //if it's the first utilisation of the application, the user cannot close this window without entering a new password
+                if(!getAdminCode().equals(context.getResources().getString(R.string.default_password)))
+                    dialog.dismiss();
+            });
 
-            }
-        });
-        dialog.show();
-    }
-
-    public void openVerifyPassword(Activity activity){
-        LayoutInflater layoutInflater = activity.getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.verify_password_view, null);
-
-        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
-
-        password.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(password.getError() != null)
-                    password.setError(null);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-
-        final AlertDialog dialog = new AlertDialog.Builder(activity).setView(view)
-                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(view -> {
-                    if(password.getText().toString().equals(getAdminCode())){
-                        dialog.dismiss();
-                        openConfingPassword(activity);
-                    }
-                    else{
-                        password.setError(activity.getResources().getString(R.string.wrongAdminCode));
-                    }
-                });
-            }
         });
         dialog.show();
     }

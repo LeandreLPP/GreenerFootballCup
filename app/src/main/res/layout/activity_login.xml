@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginTop="30dp"
         android:text="@string/login_screen_title"
         android:textAlignment="center"
@@ -72,6 +72,26 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="10dp"
+        android:text="@string/confirm_admin_code"
+        android:textColor="@color/White" />
+
+
+    <EditText
+        android:id="@+id/confirm_admin_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/White"
+        android:textColor="@color/Black"
+        android:inputType="text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
         android:text="@string/admin_email"
         android:textColor="@color/White" />
 
@@ -107,38 +127,18 @@
         android:textColor="@color/Black"
         android:inputType="textEmailAddress" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <Button
+        android:id="@+id/btnToScreen3"
+        android:layout_width="143dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
+        android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        android:orientation="horizontal">
+        android:enabled="false"
+        android:text="@string/btnToScreen3"
+        android:textAlignment="center"
+        android:textColor="@color/White" />
 
-        <Button
-            android:id="@+id/btnChangePassword"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:text="@string/btnAdminCode"
-            android:textAlignment="center"
-            android:textColor="@color/White" />
-
-        <Button
-            android:id="@+id/btnToScreen3"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="@string/btnToScreen3"
-            android:textAlignment="center"
-            android:textColor="@color/White" />
-    </LinearLayout>
 
 
 </LinearLayout>
