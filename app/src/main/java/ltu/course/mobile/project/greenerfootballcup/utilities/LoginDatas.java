@@ -32,6 +32,13 @@ public class LoginDatas {
     public static final String KEY_ADMIN_CODE = "admin_code";
     // File name (make variable public to access from outside)
     public static final String KEY_FILE = "login";
+    // Maximum number of players in a team
+    public static final String KEY_MAX_PLAYER = "maxPlayer";
+    // Maximum number of overaged players in a team
+    public static final String KEY_MAX_OVERAGED_PLAYER = "maxOveragedPlayer";
+    // Age threshold
+    public static final String KEY_AGE_THRESHOLD = "ageThreshold";
+
 
     private boolean initialized;
 
@@ -56,6 +63,9 @@ public class LoginDatas {
         context = ctx;
         pref = context.getSharedPreferences(KEY_FILE, MODE_PRIVATE);
         editor = pref.edit();
+        setAgeThreshold(getAgeThreshold());
+        setMaxOveragedPlayer(getMaxOveragedPlayer());
+        setMaxPlayer(getMaxPlayer());
         signature = null;
         initialized = true;
     }
@@ -70,6 +80,11 @@ public class LoginDatas {
     //return the preferred email
     public String getEmailAddress() { return pref.getString(KEY_EMAIL,null); }
 
+    public int getMaxPlayer(){ return pref.getInt(KEY_MAX_PLAYER,context.getResources().getInteger(R.integer.default_maxPlayer));}
+
+    public int getMaxOveragedPlayer(){ return pref.getInt(KEY_MAX_OVERAGED_PLAYER,context.getResources().getInteger(R.integer.default_maxOveragedPlayer));}
+
+    public int getAgeThreshold(){ return pref.getInt(KEY_AGE_THRESHOLD,context.getResources().getInteger(R.integer.default_ageThreshold));}
 
     public void setYear(String year){
         editor.putString(KEY_YEAR,year);
@@ -85,6 +100,23 @@ public class LoginDatas {
         editor.putString(KEY_EMAIL,emailAddress);
         editor.commit();
     }
+
+    public void setMaxPlayer(int value){
+        editor.putInt(KEY_MAX_PLAYER,value);
+        editor.commit();
+    }
+
+    public void setMaxOveragedPlayer(int value){
+        editor.putInt(KEY_MAX_OVERAGED_PLAYER,value);
+        editor.commit();
+    }
+
+    public void setAgeThreshold(int value){
+        editor.putInt(KEY_AGE_THRESHOLD,value);
+        editor.commit();
+    }
+
+
 
     public void setSignature(Bitmap bitmap){
         signature = bitmap;

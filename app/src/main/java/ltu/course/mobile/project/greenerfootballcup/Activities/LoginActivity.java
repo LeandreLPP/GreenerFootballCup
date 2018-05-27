@@ -183,7 +183,7 @@ public class LoginActivity extends AppCompatActivity {
             if(!admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
                 admin_code.setError(getResources().getString(R.string.wrongAdminCode));
             }else{
-                Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
+                Intent myIntent = new Intent(getApplicationContext(), TeamActivity.class);
                 startActivity(myIntent);
             }
         });

@@ -222,6 +222,12 @@ public class FieldActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Open a AlertDialog asking the user the admin code
+     * If it's the right admin code, then the application go back to the Login Screen
+     *
+     */
     public void openVerifyPassword(){
         LayoutInflater layoutInflater = this.getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.verify_password_view, null);
