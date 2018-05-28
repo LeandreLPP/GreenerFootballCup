@@ -27,7 +27,7 @@
     <string name="wrongAdminCode">Wrong admin code</string>
     <string name="signatureFileName">/signature.png"</string>
 
-    <string name="maxOlderPlayerOvershoot">You can select no more than two ten-year-old players</string>
+    <string name="maxOlderPlayerOvershoot">You have selected too many overaged players, the limit is </string>
     <string name="maxPlayerOvershoot">Too many players selected</string>
     <string name="notEnoughPlayers">You must select players</string>
     <string name="notSigned">You must sign</string>
@@ -43,4 +43,12 @@
     <string name="email_do_not_match">The email addresses do not match</string>
     <string name="password">password</string>
     <string name="default_password">default password</string>
+
+    <string name="edt_max_number_player">Max. players</string>
+    <string name="edt_max_overaged_player">Max. overaged players</string>
+    <string name="edt_max_age">Max. age</string>
+    <string name="disable">Disable</string>
+    <string name="enable">Enable</string>
+
+    <string name="It_must_be_a_number">It must be a number</string>
 </resources>

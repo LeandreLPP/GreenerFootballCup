@@ -3,13 +3,9 @@ package ltu.course.mobile.project.greenerfootballcup.utilities.Model;
 import java.util.ArrayList;
 import java.util.List;
 
+import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+
 public class Team {
-
-
-
-    public static final int maxPlayer = 11;
-    public static final int maxOveragedPlayer = 2;
-    public static final int ageThreshold = 05;
 
     private List<Player> players;
 
@@ -30,20 +26,20 @@ public class Team {
     public int getNumberOlderPlayers(){
         int i = 0;
         for (Player player : players) {
-            if(player.getYear() < ageThreshold)
+            if(player.getYear() < LoginDatas.getInstance().getAgeThreshold())
                 i++;
         }
         return i;
     }
 
     public boolean maxOlderPlayerOvershoot(){
-        if(getNumberOlderPlayers() > maxOveragedPlayer)
+        if(getNumberOlderPlayers() > LoginDatas.getInstance().getMaxOveragedPlayer())
             return true;
         return false;
     }
 
     public boolean maxPlayerOvershoot(){
-        if(players.size() > maxPlayer)
+        if(players.size() > LoginDatas.getInstance().getMaxPlayer())
             return true;
         return false;
     }

@@ -4,9 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorTextError">#ddff1111</color>
+    <color name="colorTextError">#ddff0008</color>
     <color name="GreyBackground">#e2e6e2</color>
     <color name="BlackBackground">#838483</color>
     <color name="White">#fefafa</color>
     <color name="Black">#050505</color>
+    <color name="LoadingBlue">#75cdf2</color>
 </resources>

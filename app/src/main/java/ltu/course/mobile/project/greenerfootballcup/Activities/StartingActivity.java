@@ -25,15 +25,10 @@ public class StartingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Force the user to initialise his password at the first utilisation
-                Intent myIntent = new Intent(getApplicationContext(), MatchActivity.class);
+
+                Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(myIntent);
 
-               /* if(LoginDatas.getInstance().getAdminCode().equals(getString(R.string.default_password)))
-                    LoginDatas.getInstance().openConfingPassword(StartingActivity.this);
-                else {
-                    Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(myIntent);
-                }*/
             }
         });
 

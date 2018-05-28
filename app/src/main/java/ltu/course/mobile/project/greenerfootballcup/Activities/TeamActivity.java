@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
@@ -28,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.ConfigurationView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.DrawingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
@@ -36,6 +40,8 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class TeamActivity extends AppCompatActivity{
 
@@ -54,7 +60,8 @@ public class TeamActivity extends AppCompatActivity{
     private PopupWindow popupWindow;
 
     private Team team;
-    private boolean adminAccess;
+    private boolean noMaxPlayer;
+    private boolean noMaxOveragedPlayer;
     private boolean signed;
 
     @Override
@@ -62,9 +69,14 @@ public class TeamActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
 
+        Intent intent = getIntent();
+        url = intent.getStringExtra(MatchActivity.LINK_TO_TEAM);
+
+
         players = null;
         team = new Team();
-        adminAccess = false;
+        noMaxOveragedPlayer = false;
+        noMaxPlayer = false;
         signed = false;
 
         playerList = (ListView)findViewById(R.id.players);
@@ -82,15 +94,15 @@ public class TeamActivity extends AppCompatActivity{
 
 
         btnConfirm.setOnClickListener(v -> {
-            if( team.getNumberPlayer() > 0 && ((adminAccess && !team.maxPlayerOvershoot()) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot())) && signed){
+            if( team.getNumberPlayer() > 0 && signed && ((noMaxOveragedPlayer && noMaxPlayer) || (noMaxPlayer && !noMaxOveragedPlayer && !team.maxOlderPlayerOvershoot()) || (!noMaxPlayer && !team.maxPlayerOvershoot() && noMaxOveragedPlayer) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot()))){
                 releaseMediaPlayer();
                 Intent myIntent = new Intent(getApplicationContext(), ReportActivity.class);
                 startActivity(myIntent);
             }else {
-                if (team.maxPlayerOvershoot())
+                if (team.maxPlayerOvershoot() && !noMaxPlayer)
                     Toast.makeText(getApplicationContext(), R.string.maxPlayerOvershoot, Toast.LENGTH_SHORT).show();
-                else if (!adminAccess && team.maxOlderPlayerOvershoot())
-                    Toast.makeText(getApplicationContext(), R.string.maxOlderPlayerOvershoot, Toast.LENGTH_SHORT).show();
+                else if (!noMaxOveragedPlayer && team.maxOlderPlayerOvershoot())
+                    Toast.makeText(getApplicationContext(),getString(R.string.maxOlderPlayerOvershoot)+LoginDatas.getInstance().getMaxOveragedPlayer(), Toast.LENGTH_SHORT).show();
                 else if (team.getNumberPlayer() == 0)
                     Toast.makeText(getApplicationContext(), R.string.notEnoughPlayers, Toast.LENGTH_SHORT).show();
                 else if(!signed)
@@ -107,9 +119,9 @@ public class TeamActivity extends AppCompatActivity{
             }
         });
 
-        btnAdminAccess.setOnClickListener(v -> OpenPopupAdminAccess());
+        btnAdminAccess.setOnClickListener(v -> openVerifyPassword());
 
-        preview_signature.setOnClickListener(v -> OpenPopupSignature());
+        preview_signature.setOnClickListener(v -> openPopupSignature());
 
         GetPlayers();
     }
@@ -119,50 +131,7 @@ public class TeamActivity extends AppCompatActivity{
         parsePlayers.execute();
     }
 
-    private void OpenPopupAdminAccess() {
-        LayoutInflater layoutInflater = getLayoutInflater();
-        View popupView = layoutInflater.inflate(R.layout.popup_admin_access, null);
-        popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        popupWindow.setFocusable(true);
-
-        Button btnValidateAdminAccess = (Button)popupView.findViewById(R.id.validateAdminAccess);
-        Button btnCancelAdminAccess = (Button)popupView.findViewById(R.id.cancelAdminAccess);
-        final EditText admin_code =(EditText)popupView.findViewById(R.id.admin_access);
-
-        btnValidateAdminAccess.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if(admin_code.getText() != null)
-                {
-                    if(admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
-                        adminAccess = true;
-                        btnAdminAccess.setBackgroundColor(Color.RED);
-                        popupWindow.dismiss();
-                        popupWindow=null;
-                    }
-                    else{
-                        adminAccess = false;
-                        Toast.makeText(getApplicationContext(),R.string.wrongAdminCode,Toast.LENGTH_SHORT).show();
-                    }
-
-                }else{
-                    adminAccess = false;
-                    Toast.makeText(getApplicationContext(),R.string.wrongAdminCode,Toast.LENGTH_SHORT).show();
-                }
-            }});
-
-        btnCancelAdminAccess.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-                popupWindow=null;
-                adminAccess = false;
-            }});
-
-        popupWindow.showAtLocation(this.btnAdminAccess, Gravity.CENTER,0,0);
-    }
-
-    private void OpenPopupSignature() {
+    private void openPopupSignature() {
         LayoutInflater layoutInflater = getLayoutInflater();
         View popupView = layoutInflater.inflate(R.layout.popup_signature, null);
         popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -220,6 +189,110 @@ public class TeamActivity extends AppCompatActivity{
             mMediaPlayer = null;
         }
 
+    }
+
+    /**
+     * Open a AlertDialog asking the user the admin code
+     * If it's the right admin code, then it opens the configuration popup
+     *
+     */
+    public void openVerifyPassword(){
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.verify_password_view, null);
+
+        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
+
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(password.getError() != null)
+                    password.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        final android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this).setView(view)
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+
+            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view1 -> {
+                if(password.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
+                    dialog.dismiss();
+                    openConfigurationDialog();
+                }
+                else{
+                    password.setError(getResources().getString(R.string.wrongAdminCode));
+                }
+            });
+        });
+        dialog.show();
+    }
+
+    /**
+     * Open a AlertDialog using by the user to modify the maximum age, the maximum number of players and the maximum number of overaged players
+     * If it's the right admin code, then it opens the configuration dialog
+     *
+     */
+    public void openConfigurationDialog(){
+        ConfigurationView view = new ConfigurationView(this);
+        ToggleButton toggle_max_overaged_player = view.findViewById(R.id.toggle_max_overaged_player);
+        ToggleButton toggle_max_number_player = view.findViewById(R.id.toggle_max_number_player);
+
+        EditText edt_max_age = view.findViewById(R.id.edt_max_age);
+        EditText edt_max_overaged_player = view.findViewById(R.id.edt_max_overaged_player);
+        EditText edt_max_number_player = view.findViewById(R.id.edt_max_number_player);
+
+        toggle_max_number_player.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                edt_max_number_player.setEnabled(true);
+                noMaxPlayer = false;
+            }else{
+                edt_max_number_player.setEnabled(false);
+                noMaxPlayer = true;
+            }
+        });
+
+        toggle_max_overaged_player.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                edt_max_overaged_player.setEnabled(true);
+                edt_max_age.setEnabled(true);
+                noMaxOveragedPlayer = false;
+            }else{
+                edt_max_overaged_player.setEnabled(false);
+                edt_max_age.setEnabled(false);
+                noMaxOveragedPlayer = true;
+            }
+        });
+
+        noMaxOveragedPlayer = false;
+        noMaxPlayer = false;
+
+
+        final android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this).setView(view)
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view1 -> {
+                dialog.dismiss();
+            });
+        });
+        dialog.show();
     }
 
     private class LoadViewAsyncTask extends AsyncTask<String, Integer, Utilities.Result> {

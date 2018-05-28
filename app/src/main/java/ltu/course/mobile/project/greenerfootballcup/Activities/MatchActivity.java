@@ -27,6 +27,7 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class MatchActivity extends AppCompatActivity {
+
     private ListView matchListView;
     private ArrayList<Match> matchList;
     private Button registerTeam1;

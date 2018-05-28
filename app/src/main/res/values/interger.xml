@@ -1,0 +1,5 @@
+<resources>
+    <integer name="default_ageThreshold">10</integer>
+    <integer name="default_maxOveragedPlayer">2</integer>
+    <integer name="default_maxPlayer">15</integer>
+</resources>

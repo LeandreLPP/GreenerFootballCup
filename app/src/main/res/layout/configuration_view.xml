@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:stretchColumns="0">
+
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tw_max_number_player"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:text="@string/edt_max_number_player"
+            android:paddingStart="10dp"
+            tools:ignore="RtlSymmetry" />
+
+        <EditText
+            android:id="@+id/edt_max_number_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="10dp"
+            android:inputType="number" />
+
+        <ToggleButton
+            android:id="@+id/toggle_max_number_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_selector"
+            android:checked="true"
+            android:text=""
+            android:textOff=""
+            android:textOn=""
+            android:scaleX="0.5"
+            android:scaleY="0.5"/>
+
+    </TableRow>
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tw_max_overaged_player"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:text="@string/edt_max_overaged_player"
+            android:paddingStart="10dp"
+            tools:ignore="RtlSymmetry" />
+
+        <EditText
+            android:id="@+id/edt_max_overaged_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="10dp"
+            android:inputType="number" />
+
+        <ToggleButton
+            android:id="@+id/toggle_max_overaged_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_selector"
+            android:checked="true"
+            android:text=""
+            android:textOff=""
+            android:textOn=""
+            android:scaleX="0.5"
+            android:scaleY="0.5"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tw_max_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:text="@string/edt_max_age"
+            android:paddingStart="10dp"
+            tools:ignore="RtlSymmetry" />
+
+        <EditText
+            android:id="@+id/edt_max_age"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="10dp"
+            android:inputType="number" />
+
+    </TableRow>
+
+
+
+</TableLayout>
