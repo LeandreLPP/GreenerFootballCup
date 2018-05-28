@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
 
 
 public class StartingActivity extends AppCompatActivity {
@@ -24,17 +25,20 @@ public class StartingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Force the user to initialise his password at the first utilisation
-                if(LoginDatas.getInstance().getAdminCode().equals(getString(R.string.default_password)))
+                Intent myIntent = new Intent(getApplicationContext(), MatchActivity.class);
+                startActivity(myIntent);
+
+               /* if(LoginDatas.getInstance().getAdminCode().equals(getString(R.string.default_password)))
                     LoginDatas.getInstance().openConfingPassword(StartingActivity.this);
                 else {
                     Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(myIntent);
-                }
+                }*/
             }
         });
 
         //Very important, need to initialize the LoginData with the applicationContext to be able to use SharedPreference file
-        LoginDatas.getInstance().initialize(getApplicationContext());
+       // LoginDatas.getInstance().initialize(getApplicationContext());
 
     }
 

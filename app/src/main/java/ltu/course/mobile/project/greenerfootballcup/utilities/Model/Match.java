@@ -4,20 +4,21 @@ public class Match {
     private String number;
     private String group;
     private String time;
-    private Team firstTeam;
-    private Team secondTeam;
-    private String groupURL;
+    private String firstTeam;
+    private String secondTeam;
+    private String firstTeamURL;
+    private String secondTeamURL;
 
 
 
-    public  Match (String number, String group, String groupURL, String time, Team firstTeam, Team secondTeam){
+    public  Match (String number, String group, String time, String firstTeam, String secondTeam, String firstTeamURL, String secondTeamURL){
         this.number = number;
         this.group = group;
-        this.groupURL = groupURL;
         this.time = time;
         this.firstTeam = firstTeam;
+        this.firstTeamURL =firstTeamURL;
         this.secondTeam = secondTeam;
-
+        this.secondTeamURL =secondTeamURL;
     }
 
     public String getNumber() {
@@ -28,17 +29,19 @@ public class Match {
         return group;
     }
 
-    public String getGroupURL(){return groupURL; }
-
     public String getTime() {
         return time;
     }
 
-    public Team getFirstTeam() {
+    public String getFirstTeam() {
         return firstTeam;
     }
 
-    public Team getSecondTeam() {
+    public String getSecondTeam() {
         return secondTeam;
     }
+
+    public  String getFirstTeamURL(){return firstTeamURL;}
+
+    public  String getSecondTeamURL(){return secondTeamURL;}
 }
