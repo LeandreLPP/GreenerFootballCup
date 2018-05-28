@@ -34,7 +34,7 @@ public class LoadingView extends RelativeLayout {
         loadingText = findViewById(R.id.loadingText);
         progressBar = findViewById(R.id.progressBar);
         loadingText.setText(R.string.loading);
-        loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        loadingText.setTextColor(getResources().getColor(R.color.LoadingBlue));
         progressBar.setEnabled(true);
         progressBar.setProgress(0);
     }
@@ -49,6 +49,7 @@ public class LoadingView extends RelativeLayout {
 
     public void setLoadingText(int text){
         loadingText.setText(text);
+        loadingText.setTextColor(getResources().getColor(R.color.LoadingBlue));
     }
 
     public void setLoadingText(String text){

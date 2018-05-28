@@ -7,7 +7,6 @@
     android:background="@drawable/background">
 
     <ImageView
-        android:id="@+id/logo_starting_screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
@@ -22,7 +21,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/team_screen_title"
         android:textColor="@color/White"
-        android:textSize="30sp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     <RelativeLayout
         android:layout_width="wrap_content"

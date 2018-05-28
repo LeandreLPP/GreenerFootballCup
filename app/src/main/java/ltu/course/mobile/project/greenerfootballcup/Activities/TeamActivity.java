@@ -41,6 +41,8 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdap
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 public class TeamActivity extends AppCompatActivity{
 
     private MediaPlayer mMediaPlayer;
@@ -66,6 +68,10 @@ public class TeamActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
+
+        Intent intent = getIntent();
+        url = intent.getStringExtra(MatchActivity.LINK_TO_TEAM);
+
 
         players = null;
         team = new Team();

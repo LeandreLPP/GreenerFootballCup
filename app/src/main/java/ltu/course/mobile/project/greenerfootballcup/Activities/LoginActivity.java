@@ -18,6 +18,7 @@ import java.util.Calendar;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -183,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             if(!admin_code.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
                 admin_code.setError(getResources().getString(R.string.wrongAdminCode));
             }else{
-                Intent myIntent = new Intent(getApplicationContext(), TeamActivity.class);
+                Intent myIntent = new Intent(getApplicationContext(), FieldActivity.class);
                 startActivity(myIntent);
             }
         });

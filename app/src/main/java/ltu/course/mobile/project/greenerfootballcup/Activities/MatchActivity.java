@@ -23,6 +23,7 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 
 public class MatchActivity extends AppCompatActivity {
+    public static final String LINK_TO_TEAM = "LINK_TO_TEAM";
     private Field field;
     private Match match;
     private ListView matcheList;
