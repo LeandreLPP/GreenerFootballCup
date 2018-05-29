@@ -32,11 +32,16 @@ import android.widget.Toast;
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ConfirmationDialogFragment;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ReportGenerator;
 
 public class ReportActivity extends AppCompatActivity {
@@ -183,8 +188,8 @@ public class ReportActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = getLayoutInflater();
         View popupView = layoutInflater.inflate(R.layout.popup_report, null);
         popupWindow = new PopupWindow(popupView,
-                                                  WindowManager.LayoutParams.WRAP_CONTENT,
-                                                  WindowManager.LayoutParams.WRAP_CONTENT);
+                                      WindowManager.LayoutParams.WRAP_CONTENT,
+                                      WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
 
         pdfView = (PDFView) popupView.findViewById(R.id.pdfView);
@@ -251,45 +256,13 @@ public class ReportActivity extends AppCompatActivity {
                 bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                 int nh = (int) ( bmp.getHeight() * (2048.0 / bmp.getWidth()) );
                 bmp = Bitmap.createScaledBitmap(bmp, 2048,  nh, true);
-
-                ExifInterface ei = new ExifInterface(file.getPath());
-                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                                     ExifInterface.ORIENTATION_UNDEFINED);
-
-                Bitmap rotatedBitmap = null;
-                switch(orientation) {
-
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        rotatedBitmap = rotateImage(bmp, 90);
-                        break;
-
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        rotatedBitmap = rotateImage(bmp, 180);
-                        break;
-
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        rotatedBitmap = rotateImage(bmp, 270);
-                        break;
-
-                    case ExifInterface.ORIENTATION_NORMAL:
-                    default:
-                        rotatedBitmap = bmp;
-                }
-                bmp = rotatedBitmap;
                 return bmp != null;
             }
             catch (Exception e)
             {
-                Log.d("","Error while saving picture",e);
+                Log.d("","Error while loading picture",e);
                 return false;
             }
-        }
-
-        private Bitmap rotateImage(Bitmap source, float angle) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(angle);
-            return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                                       matrix, true);
         }
 
         @Override
@@ -318,6 +291,66 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
+    private class RotateAndSaveFile extends AsyncTask<File, Void, Void> {
+
+        private Callback callback;
+
+        public RotateAndSaveFile setCallback(Callback callback)
+        {
+            this.callback = callback;
+            return this;
+        }
+
+        @Override
+        protected Void doInBackground(File... files) {
+            try
+            {
+                File imageFile = files[0];
+
+                Bitmap bmp = BitmapFactory.decodeFile(tempFile.getAbsolutePath());
+
+                int nh = (int) ( bmp.getHeight() * (2048.0 / bmp.getWidth()) );
+                bmp = Bitmap.createScaledBitmap(bmp, 2048,  nh, true);
+
+                ExifInterface ei = new ExifInterface(tempFile.getPath());
+                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                                     ExifInterface.ORIENTATION_UNDEFINED);
+
+                if(orientation == ExifInterface.ORIENTATION_ROTATE_180)
+                        bmp = rotateImage(bmp, 180);
+
+                FileOutputStream fos = new FileOutputStream(imageFile);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.close();
+                tempFile.delete();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(callback != null)
+                callback.execute();
+        }
+
+        private Bitmap rotateImage(Bitmap source, float angle) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                                       matrix, true);
+        }
+    }
+
+    private interface Callback {
+        void execute();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK)
@@ -326,14 +359,15 @@ public class ReportActivity extends AppCompatActivity {
             ImageView imgView = requestCode == REQUEST_CAPTURE_RESULT ? imageViewResult : imageViewFairplay;
             ProgressBar progressBar = requestCode == REQUEST_CAPTURE_RESULT ? progressBarResult : progressBarFairplay;
 
-            tempFile.renameTo(imgFile);
-
-            new LoadImage().execute(new Param(imgFile, imgView, progressBar));
+            new RotateAndSaveFile()
+                    .setCallback(() -> {
+                        new LoadImage().execute(new Param(imgFile, imgView, progressBar));
+                        checkReportCompleteAndGenerate();
+                    })
+                    .execute(imgFile);
 
             if(popupWindow != null && popupWindow.isShowing())
                 popupWindow.dismiss();
-
-            checkReportCompleteAndGenerate();
         } else if (backupFile.exists()){
             File imgFile = requestCode == REQUEST_CAPTURE_RESULT ? fileImgResult : fileImgFairplay;
             backupFile.getAbsoluteFile().renameTo(imgFile);
@@ -384,7 +418,33 @@ public class ReportActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            return ReportGenerator.generate(fileReport, fileImgResult, fileImgFairplay, null, null, null);
+            boolean ret = false;
+            try
+            {
+                Match match = new Match("Number", "Group", "time", "Team1", "Team2", "Team1URL", "Team2URL");
+                Team teamA, teamB;
+                teamA = new Team();
+                teamA.addPlayer(new Player("T1J1", "11"));
+                teamA.addPlayer(new Player("T1J2", "11"));
+                teamA.addPlayer(new Player("T1J3", "11"));
+                teamA.addPlayer(new Player("T1J4", "11"));
+                teamA.addPlayer(new Player("T1J5", "11"));
+                teamB = new Team();
+                teamB.addPlayer(new Player("T2J1", "22"));
+                teamB.addPlayer(new Player("T2J2", "22"));
+                teamB.addPlayer(new Player("T2J3", "22"));
+                teamB.addPlayer(new Player("T2J4", "22"));
+                File signatureTeamA, signatureTeamB;
+                signatureTeamA = signatureTeamB = null;
+                ret = ReportGenerator.generate(fileReport, fileImgResult, fileImgFairplay,
+                                               match, teamA, teamB,
+                                               signatureTeamA, signatureTeamB);
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+            return ret;
         }
 
         @Override
