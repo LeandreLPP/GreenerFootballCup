@@ -11,7 +11,7 @@ public class MatchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match);
-        Button button = findViewById(R.id.button);
+        Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener((c)->{
             Intent i = new Intent(this, TeamActivity.class);
             startActivity(i);

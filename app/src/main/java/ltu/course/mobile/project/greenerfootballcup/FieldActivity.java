@@ -48,10 +48,10 @@ public class FieldActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_field);
 
-        loadingLayout = findViewById(R.id.loadingLayout);
-        loadingText = findViewById(R.id.loadingText);
-        progressBar = findViewById(R.id.progressBar);
-        fieldGridLayout = findViewById(R.id.fieldGridLayout);
+        loadingLayout = (ConstraintLayout) findViewById(R.id.loadingLayout);
+        loadingText = (TextView) findViewById(R.id.loadingText);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        fieldGridLayout = (GridLayout) findViewById(R.id.fieldGridLayout);
 
         handlerActivity = new Handler();
         task = new LoadViewAsyncTask();

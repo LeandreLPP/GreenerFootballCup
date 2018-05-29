@@ -1,8 +1,7 @@
 package ltu.course.mobile.project.greenerfootballcup;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,23 +10,20 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Debug;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -36,54 +32,57 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnTapListener;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Executable;
-import java.net.URI;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.ConfirmationDialogFragment;
-import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
+import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.ReportGenerator;
 
 public class ReportActivity extends AppCompatActivity {
-
-    private File fileImgResult, fileImgFairplay, fileReport;
-    private ImageView imageViewResult, imageViewFairplay, imageViewReport;
-    private Button buttonSendReport;
-
     private static final int REQUEST_CAMERA_PERMISSION = 1324;
     private static final int REQUEST_CAPTURE_RESULT = 1526;
     private static final int REQUEST_CAPTURE_FAIRPLAY = 1527;
+
+    private static final String FRAGMENT_DIALOG = "dialog";
+
+    private File fileImgResult, fileImgFairplay, fileReport, backupFile;
+    private ImageView imageViewResult, imageViewFairplay;
+    private PDFView imageViewReport;
+
+    private Button buttonSendReport;
+    private Button buttonPreviewReport;
+
     private PopupWindow popupWindow;
 
-    private File backupFile;
-
-    private boolean hasAutorisationCamera;
+    private boolean hasAuthorisationCamera;
+    private GenerateReportTask generateReportTask;
     private ProgressBar progressBarResult, progressBarFairplay;
-
-    private Handler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
-        hasAutorisationCamera = false;
+        hasAuthorisationCamera = false;
 
-        imageViewResult = findViewById(R.id.imageViewResult);
-        imageViewFairplay = findViewById(R.id.imageViewFairplay);
-        imageViewReport = findViewById(R.id.imageViewReport);
+        imageViewResult = (ImageView) findViewById(R.id.imageViewResult);
+        imageViewFairplay = (ImageView) findViewById(R.id.imageViewFairplay);
+        imageViewReport = (PDFView) findViewById(R.id.imageViewReport);
 
-        progressBarResult = findViewById(R.id.progressBarResult);
-        progressBarFairplay = findViewById(R.id.progressBarFairplay);
+        progressBarResult = (ProgressBar) findViewById(R.id.progressBarResult);
+        progressBarFairplay = (ProgressBar) findViewById(R.id.progressBarFairplay);
 
         File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         fileImgResult = new File(dir, "pictureResults.jpg");
         fileImgFairplay = new File(dir, "pictureFairplay.jpg");
         backupFile = new File(dir, "backup.jpg");
-        fileReport = new File(getFilesDir(), "report.pdf");
+        fileReport = new File(dir, "report.pdf");
 
         imageViewResult.setOnClickListener((c) -> {
             if(fileImgResult.exists())
@@ -100,11 +99,14 @@ public class ReportActivity extends AppCompatActivity {
         new LoadImage().execute(new Param(fileImgFairplay, imageViewFairplay, progressBarFairplay));
         // TODO report image
 
-        buttonSendReport = findViewById(R.id.buttonSendReport);
-        uiHandler = new Handler();
+        buttonSendReport = (Button) findViewById(R.id.buttonSendReport);
+        buttonSendReport.setOnClickListener((c)->sendReport());
+        buttonSendReport.setEnabled(false);
+        buttonPreviewReport = (Button) findViewById(R.id.buttonPreviewReport);
+        buttonPreviewReport.setOnClickListener((c)->openPopupReport());
+        buttonPreviewReport.setEnabled(false);
+        checkReportCompleteAndGenerate();
     }
-
-    private static final String FRAGMENT_DIALOG = "dialog";
     @Override
     protected void onResume() {
         super.onResume();
@@ -115,11 +117,11 @@ public class ReportActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED)
         {
-            hasAutorisationCamera = true;
+            hasAuthorisationCamera = true;
         }
         else
         {
-            hasAutorisationCamera = false;
+            hasAuthorisationCamera = false;
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                                                                     Manifest.permission.CAMERA))
             {
@@ -143,13 +145,13 @@ public class ReportActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION:
-                hasAutorisationCamera = false;
+                hasAuthorisationCamera = false;
                 if (permissions.length != 1 || grantResults.length != 1) {
                     throw new RuntimeException("Error on requesting camera permission.");
                 }
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    hasAutorisationCamera = true;
+                    hasAuthorisationCamera = true;
                 }
                 else {
                     Toast.makeText(this, R.string.camera_permission_not_granted,
@@ -168,20 +170,37 @@ public class ReportActivity extends AppCompatActivity {
                                       WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
 
-        Button retake_picture = popupView.findViewById(R.id.buttonRetakePicture);
-        ImageView imageView = popupView.findViewById(R.id.imageView);
-        ProgressBar progressBar = popupView.findViewById(R.id.progressBar);
+        Button retake_picture = (Button) popupView.findViewById(R.id.buttonRetakePicture);
+        ImageView imageView = (ImageView) popupView.findViewById(R.id.imageView);
+        ProgressBar progressBar = (ProgressBar) popupView.findViewById(R.id.progressBar);
 
         new LoadImage().execute(new Param(imgFile, imageView, progressBar));
 
         retake_picture.setOnClickListener(v -> takePicture(intentID));
 
-        popupWindow.showAtLocation(this.imageViewFairplay, Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(imageViewFairplay, Gravity.CENTER, 0, 0);
+    }
+
+
+    private PDFView pdfView;
+    private void openPopupReport() {
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View popupView = layoutInflater.inflate(R.layout.popup_report, null);
+        popupWindow = new PopupWindow(popupView,
+                                                  WindowManager.LayoutParams.WRAP_CONTENT,
+                                                  WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setFocusable(true);
+
+        pdfView = (PDFView) popupView.findViewById(R.id.pdfView);
+        popupView.setOnClickListener((c) ->  popupWindow.dismiss());
+
+        popupWindow.showAtLocation(imageViewFairplay, Gravity.CENTER, 0, 0);
+        pdfView.fromFile(fileReport).load();
     }
 
     private void takePicture(int intentID) {
         checkAuthorisationCamera();
-        if(!hasAutorisationCamera){
+        if(!hasAuthorisationCamera){
             Toast.makeText(this, R.string.camera_permission_not_granted, Toast.LENGTH_LONG).show();
             return;
         }
@@ -285,7 +304,7 @@ public class ReportActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean b) {
-            progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.GONE);
             if(b)
                 imgView.setImageBitmap(bmp);
         }
@@ -326,7 +345,64 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private void checkReportCompleteAndGenerate() {
-        // TODO Complete method
-        Toast.makeText(this, "Report generate method called.", Toast.LENGTH_SHORT).show();
+        if(fileImgResult.exists() && fileImgFairplay.exists())
+        {
+            if(generateReportTask != null)
+                generateReportTask.cancel(true);
+            generateReportTask = new GenerateReportTask();
+            generateReportTask.execute();
+        }
+    }
+
+    private void sendReport() {
+        String subject = "Results for the match"; // TODO generate coherent text
+        String text = "Result"; //TODO generate coherent text
+
+        sendEmail(this, LoginDatas.getInstance().getEmailAddress(), subject, text, fileReport);
+    }
+
+    public static void sendEmail(Context context, String emailTo,
+                                 String subject, String emailText, File attachment) {
+        final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        String[] to = new String[] {emailTo};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(attachment));
+
+        // needed to select only the email apps
+        Intent emailSelectorIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+        emailIntent.setSelector(emailSelectorIntent);
+
+        context.startActivity(Intent.createChooser(emailIntent , "Send email..."));
+    }
+
+    private class GenerateReportTask extends AsyncTask<Void, Void, Boolean>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            buttonPreviewReport.setEnabled(false);
+            buttonSendReport.setEnabled(false);
+            Toast.makeText(ReportActivity.this, "Started generating", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return ReportGenerator.generate(fileReport, fileImgResult, fileImgFairplay, null, null, null);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            Toast.makeText(ReportActivity.this, "Generation completed: "+success, Toast.LENGTH_LONG).show();
+            if(success)
+            {
+                imageViewReport.fromFile(fileReport)
+                               .enableDoubletap(false)
+                               .load();
+                buttonSendReport.setEnabled(true);
+                buttonPreviewReport.setEnabled(true);
+            }
+        }
     }
 }

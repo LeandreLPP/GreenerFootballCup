@@ -9,7 +9,7 @@
     <string name="title_result_image">Scan of the results</string>
     <string name="title_fair_play_image">Scan of the fair play results</string>
     <string name="title_report_image">Generated report</string>
-    <string name="button_send_report">Send the report</string>
+    <string name="button_send_report">Send</string>
 
     <string name="loading">Loading, please wait...</string>
     <string name="loading_failed">Loading failed.\nTouch to retry.</string>
@@ -39,5 +39,6 @@
     <string name="retake_picture">Retake picture</string>
     <string name="camera_permission_confirmation">You need to take pictures of the result card to generate the report. To do so, this application requires the access rights to the camera.</string>
     <string name="camera_permission_not_granted">You cannot generate the report without taking pictures of the result card. Please allow access to the camera.</string>
+    <string name="button_preview_report">Preview</string>
 
 </resources>
