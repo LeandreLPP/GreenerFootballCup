@@ -1,4 +1,4 @@
-package ltu.course.mobile.project.greenerfootballcup.utilities;
+package ltu.course.mobile.project.greenerfootballcup.utilities.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,10 +9,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 
 public class PlayerAdapter extends BaseAdapter {
     Context context;

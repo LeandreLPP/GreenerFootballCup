@@ -1,64 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TeamActivity">
+    android:orientation="vertical"
+    android:background="@drawable/background">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/gammelstads_title" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
         android:text="@string/team_screen_title"
-        android:textSize="30sp"
-        tools:layout_editor_absoluteX="137dp"
-        tools:layout_editor_absoluteY="45dp" />
+        android:textColor="@color/White"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
-    <ListView
-        android:id="@+id/players"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView
+            android:id="@+id/loadingView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/players"
+            android:layout_alignEnd="@id/players"
+            android:layout_alignLeft="@id/players"
+            android:layout_alignRight="@id/players"
+            android:layout_alignStart="@id/players"
+            android:layout_alignTop="@id/players"
+            android:layout_marginTop="0dp" />
+
+        <ListView
+            android:id="@+id/players"
+            android:layout_width="match_parent"
+            android:layout_height="335dp"
+            android:background="@drawable/border_listview"
+            android:padding="0dp"
+            android:paddingLeft="5dp" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="335dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="73dp"
-        android:background="@drawable/border_listview"
-        android:padding="5dp" />
+        android:layout_marginStart="10dp"
+        android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/preview_signature"
-        android:layout_width="230dp"
-        android:layout_height="74dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="21dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/border_listview"
-        android:padding="5dp"
-        android:scaleType="fitXY"/>
+        <ImageView
+            android:id="@+id/preview_signature"
+            android:layout_width="0dp"
+            android:layout_height="74dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_listview"
+            android:padding="0dp"
+            android:scaleType="fitXY" />
 
-    <Button
-        android:id="@+id/btnAdminAccess"
-        android:layout_width="116dp"
-        android:layout_height="35dp"
-        android:layout_alignTop="@+id/preview_signature"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@id/preview_signature"
-        android:text="@string/btnAdminAccess"
-        android:textSize="10dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnConfirm"
-        android:layout_width="116dp"
-        android:layout_height="35dp"
-        android:layout_alignBottom="@+id/preview_signature"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@id/preview_signature"
-        android:text="@string/btnConfirm"
-        android:textSize="10dp" />
+            <Button
+                android:id="@+id/btnAdminAccess"
+                android:layout_width="116dp"
+                android:layout_height="35dp"
+                android:text="@string/btnAdminAccess"
+                android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/btnConfirm"
+                android:layout_width="116dp"
+                android:layout_height="35dp"
+                android:text="@string/btnConfirm"
+                android:textSize="12sp" />
 
-
-</RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

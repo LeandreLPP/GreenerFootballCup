@@ -15,30 +15,51 @@
     <string name="loading_failed">Loading failed.\nTouch to retry.</string>
     <string name="no_field_error">The list of fields for this season is empty.\nTouch to retry.</string>
     <string name="website_down_error">Failed to access the \"teamplaycup.se\" website.\nTouch to retry.</string>
-    <string name="login_screen_title">Welcome to the cup management system</string>
+    <string name="login_screen_title">Log in</string>
     <string name="team_screen_title">Configure your team</string>
 
-    <string name="current_year">Enter the current year</string>
-    <string name="admin_code">Enter admin code</string>
+    <string name="current_year">Current year</string>
+    <string name="admin_code">Admin code</string>
+    <string name="admin_email">Admin’s e-mail to send reports to</string>
     <string name="confirm_admin_code">Confirm admin code</string>
-    <string name="admin_email">Enter admin’s e-mail to send reports to</string>
     <string name="confirm_admin_email">Confirm admin’s e-mail</string>
-    <string name="btnToScreen2">Let\'s go !</string>
+    <string name="btnToScreen3">Let\'s go !</string>
+    <string name="btnAdminCode">Change the admin code</string>
 
     <string name="btnAdminAccess">Admin Access</string>
     <string name="btnResetSignature">Reset signature</string>
     <string name="btnConfirm">Confirm</string>
     <string name="btnCancel">Cancel</string>
-    <string name="toastWrongAdminCode">Wrong admin code</string>
+    <string name="wrongAdminCode">Wrong admin code</string>
     <string name="signatureFileName">/signature.png"</string>
 
-    <string name="maxOlderPlayerOvershoot">You can select no more than two ten-year-old players</string>
+    <string name="maxOlderPlayerOvershoot">You have selected too many overaged players, the limit is </string>
     <string name="maxPlayerOvershoot">Too many players selected</string>
     <string name="notEnoughPlayers">You must select players</string>
+    <string name="notSigned">You must sign</string>
 
     <string name="retake_picture">Retake picture</string>
     <string name="camera_permission_confirmation">You need to take pictures of the result card to generate the report. To do so, this application requires the access rights to the camera.</string>
     <string name="camera_permission_not_granted">You cannot generate the report without taking pictures of the result card. Please allow access to the camera.</string>
     <string name="button_preview_report">Preview</string>
 
+    <string name="cancel_year">Cancel</string>
+    <string name="confirm_year">Confirm</string>
+    <string name="title_year_picker">Select a year</string>
+
+    <string name="title_starting_screen">Welcome to the cup management system</string>
+    <string name="btnStartManaging">Let\'s start !</string>
+
+    <string name="passwords_do_not_match">The passwords do not match</string>
+    <string name="email_do_not_match">The email addresses do not match</string>
+    <string name="password">password</string>
+    <string name="default_password">default password</string>
+
+    <string name="edt_max_number_player">Max. players</string>
+    <string name="edt_max_overaged_player">Max. overaged players</string>
+    <string name="edt_max_age">Max. age</string>
+    <string name="disable">Disable</string>
+    <string name="enable">Enable</string>
+
+    <string name="It_must_be_a_number">It must be a number</string>
 </resources>

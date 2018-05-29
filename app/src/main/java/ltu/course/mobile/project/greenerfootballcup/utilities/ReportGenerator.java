@@ -11,9 +11,12 @@ import com.cete.dynamicpdf.pageelements.Label;
 
 import java.io.File;
 
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
+
 public abstract class ReportGenerator {
     public static boolean generate(File outputFile, File resultPicture, File fairplayPicture,
-                                         File signatureFile, Match match, Team team){
+                                   File signatureFile, Match match, Team team){
         // Create a document and set it's properties
         Document objDocument = new Document();
         objDocument.setCreator("DynamicPDFHelloWorld.java");

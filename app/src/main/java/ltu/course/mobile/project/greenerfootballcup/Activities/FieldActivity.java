@@ -1,44 +1,42 @@
-package ltu.course.mobile.project.greenerfootballcup;
+package ltu.course.mobile.project.greenerfootballcup.Activities;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+
 import java.util.List;
 
-import ltu.course.mobile.project.greenerfootballcup.utilities.Field;
+import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class FieldActivity extends AppCompatActivity {
 
     public static final int GRID_LAYOUT_WIDTH = 4;
     public static final String FIELD_ARGUMENT_ID = "FIELD";
-    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1234;
 
-    private ConstraintLayout loadingLayout;
-    private TextView loadingText;
-    private ProgressBar progressBar;
+    private LoadingView loadingView;
+
     private GridLayout fieldGridLayout;
     private Handler handlerActivity;
     private LoadViewAsyncTask task;
@@ -48,14 +46,31 @@ public class FieldActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_field);
 
-        loadingLayout = (ConstraintLayout) findViewById(R.id.loadingLayout);
-        loadingText = (TextView) findViewById(R.id.loadingText);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        fieldGridLayout = (GridLayout) findViewById(R.id.fieldGridLayout);
+        fieldGridLayout = findViewById(R.id.fieldGridLayout);
+        fieldGridLayout.setVisibility(View.INVISIBLE);
+        loadingView = findViewById(R.id.loadingView);
+        loadingView.setMaxProgress(5);
 
         handlerActivity = new Handler();
+
         task = new LoadViewAsyncTask();
         task.execute();
+    }
+
+    /**
+     * Avoid to come back to the LoginActivity using the back button
+     */
+    @Override
+    public void onBackPressed() {
+        openVerifyPassword();
+        return;
+    }
+
+    /**
+     * Use to back to the previous activity
+     */
+    public void backToPreviousActivity(){
+        finish();
     }
 
     /**
@@ -135,58 +150,29 @@ public class FieldActivity extends AppCompatActivity {
         return ret;
     }
 
-    private synchronized void checkInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        boolean connected = cm != null && cm.getActiveNetworkInfo() != null;
-        if (!connected)
-        {
-            RequirePermissionDialogFragment dialogFragment = new RequirePermissionDialogFragment();
-            dialogFragment.show(getFragmentManager(), "need_internet");
-        }
-    }
-
-    public static class RequirePermissionDialogFragment extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.need_internet_message)
-                   .setPositiveButton(R.string.ok, (dialog, id) -> ActivityCompat.requestPermissions(
-                           getActivity(),
-                           new String[]{Manifest.permission.INTERNET},
-                           MY_PERMISSIONS_REQUEST_READ_CONTACTS));
-            // Create the AlertDialog object and return it
-            return builder.create();
-        }
-    }
-
-    private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Result> {
+    private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Utilities.Result> {
         private List<List<Field>> fieldList;
 
         @Override
         protected void onPreExecute() {
-            loadingLayout.setOnClickListener(null);
-            loadingText.setText(R.string.loading);
-            loadingText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            progressBar.setEnabled(true);
-            progressBar.setProgress(0);
-            progressBar.setMax(5);
+            loadingView.setOnClickListener(null);
+            loadingView.setLoadingText(R.string.loading);
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            progressBar.setProgress(progress[0]);
+            loadingView.updateBar(progress[0]);
         }
 
         @Override
-        protected Result doInBackground(Void... voids) {
-            Result result = new Result();
+        protected Utilities.Result doInBackground(Void... voids) {
+            Utilities.Result result = new Utilities.Result();
             result.success = false;
             try
             {
                 publishProgress(0);
-                handlerActivity.post(FieldActivity.this::checkInternetConnection);
+                handlerActivity.post(() -> { Utilities.checkInternetConnection(FieldActivity.this); });
                 publishProgress(1);
                 String docUrl = ParserHTML.getURLofAllMatches(LoginDatas.getInstance().getYear());
                 publishProgress(2);
@@ -215,32 +201,77 @@ public class FieldActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Result result) {
+        protected void onPostExecute(Utilities.Result result) {
             if (result.success)
             {
-                loadingLayout.setOnClickListener(null);
-                loadingLayout.setVisibility(ConstraintLayout.INVISIBLE);
                 fillGridLayout(fieldList);
+                loadingView.setVisibility(View.INVISIBLE);
+                fieldGridLayout.setVisibility(View.VISIBLE);
             }
-            else displayError(result.errorMessage);
+            else{
+                loadingView.displayError(result.errorMessage);
+                loadingView.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
+            }
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            displayError(getString(R.string.loading_failed));
+            loadingView.displayError(getString(R.string.loading_failed));
         }
 
-        void displayError(String errorMessage) {
-            loadingLayout.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
-            loadingText.setText(errorMessage);
-            loadingText.setTextColor(getResources().getColor(R.color.colorTextError));
-            progressBar.setEnabled(false);
-        }
     }
 
-    private static class Result{
-        public String errorMessage;
-        public boolean success;
+
+    /**
+     * Open a AlertDialog asking the user the admin code
+     * If it's the right admin code, then the application go back to the Login Screen
+     *
+     */
+    public void openVerifyPassword(){
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.verify_password_view, null);
+
+        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
+
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(password.getError() != null)
+                    password.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        final android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this).setView(view)
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+
+            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view1 -> {
+                if(password.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
+                    dialog.dismiss();
+                    backToPreviousActivity();
+                }
+                else{
+                    password.setError(getResources().getString(R.string.wrongAdminCode));
+                }
+            });
+        });
+        dialog.show();
     }
+
 }

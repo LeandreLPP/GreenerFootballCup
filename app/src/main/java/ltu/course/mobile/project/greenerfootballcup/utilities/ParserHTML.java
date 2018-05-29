@@ -16,10 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.List;
+
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 
 
 public class ParserHTML {
@@ -64,8 +63,8 @@ public class ParserHTML {
         return list.toArray(new Field[list.size()]);
     }
 
-    public static Match[] extractMatches(Document htmlDoc) {
-        return new Match[0];
+    public static void extractMatches(Document htmlDoc) {
+
     }
 
     public class WrongDocumentException extends Exception {
