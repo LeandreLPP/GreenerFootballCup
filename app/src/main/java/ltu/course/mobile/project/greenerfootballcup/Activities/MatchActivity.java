@@ -3,6 +3,7 @@ package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.MatchAdapter;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
@@ -40,7 +42,8 @@ public class MatchActivity extends AppCompatActivity {
     private String Fieldname;
     private static MatchAdapter adapter;
     private Match selectedMatch;
-
+    private LoadingView loadingView;
+    private Handler handlerActivity;
 
     public static final String TEAM_URL = "FIELD";
 
@@ -60,12 +63,18 @@ public class MatchActivity extends AppCompatActivity {
 
         matchList = new ArrayList<>();
         matchListView = (ListView) findViewById(R.id.matches);
-
+        View header = (View)getLayoutInflater().inflate(R.layout.match_list_header,null);
+        matchListView.addHeaderView(header);
+        matchListView.setVisibility(View.INVISIBLE);
+        handlerActivity = new Handler();
         selectedMatch = null;
 
         registerTeam1 = (Button) findViewById(R.id.team1);
         registerTeam2 = (Button) findViewById(R.id.team2);
         registerResult = (Button) findViewById(R.id.register);
+
+        loadingView = findViewById(R.id.loadingMatchView);
+        loadingView.setMaxProgress(3);
 
 
         final fillList fillMatchList = new fillList();
@@ -115,6 +124,16 @@ public class MatchActivity extends AppCompatActivity {
 
     private class fillList extends AsyncTask<String, Integer, Utilities.Result> {
 
+        @Override
+        protected void onPreExecute() {
+            loadingView.setOnClickListener(null);
+            loadingView.setLoadingText(R.string.loading);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            loadingView.updateBar(progress[0]);
+        }
 
         @Override
         protected Utilities.Result doInBackground(String... strings) {
@@ -124,7 +143,13 @@ public class MatchActivity extends AppCompatActivity {
                 // url = ("http://www.teamplaycup.se/cup/?games&home=kurirenspelen/" + LoginDatas.KEY_YEAR + "&scope=all&arena=" + fieldArg + "&field=");
                //the bottom url is a test URL - upper URL is for the finished App
                 url = "http://teamplaycup.se/cup/?games&home=kurirenspelen/17&scope=all&arena=A%2011-manna%20(Gstad)&field=";
+                publishProgress(0);
+                handlerActivity.post(() -> {
+                    Utilities.checkInternetConnection(MatchActivity.this);
+                });
+                publishProgress(1);
                 HTMLdocument = ParserHTML.getHTMLDocument(url);
+                publishProgress(2);
                 Elements content = HTMLdocument.select("h4");
                 Element matchNode = null;
 
@@ -139,7 +164,7 @@ public class MatchActivity extends AppCompatActivity {
                     }
 
                 }
-
+                publishProgress(3);
 
                 result.success = true;
 
@@ -157,24 +182,38 @@ public class MatchActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute (Utilities.Result result){
-          title.setText(Fieldname);
 
-            adapter = new MatchAdapter(matchList, getApplicationContext());
-            matchListView.setAdapter(adapter);
 
-            //display to be configured teams on buttons
-            matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Match xMatch = matchList.get(position);
+            if (result.success) {
+                title.setText(Fieldname);
+                adapter = new MatchAdapter(matchList, getApplicationContext());
+                matchListView.setAdapter(adapter);
 
-                    registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
-                    registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
-                    selectedMatch = xMatch;
-                }
-            });
+                //display to be configured teams on buttons
+                matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Match xMatch = matchList.get(position);
+
+                        registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
+                        registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
+                        selectedMatch = xMatch;
+                    }
+                });
+                matchListView.setVisibility(View.VISIBLE);
+                loadingView.setVisibility(View.INVISIBLE);
+            }
+            else {
+                loadingView.displayError(result.errorMessage);
+                loadingView.setOnClickListener((c) -> (new fillList()).execute());
+            }
         }
 
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            loadingView.displayError(getString(R.string.loading_failed));
+        }
 
     }
 }

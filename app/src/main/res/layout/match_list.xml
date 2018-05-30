@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
-        android:layout_weight="0.5"/>
+        android:layout_weight="1"/>
     <TextView
         android:id="@+id/match_time"
         android:layout_width="0dp"
@@ -43,6 +43,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
+        android:layout_marginLeft="10dp"
         android:layout_weight="2"/>
 
 

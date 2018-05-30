@@ -1,79 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MatchActivity"
-    >
+    tools:context=".Activities.MatchActivity" android:background="@drawable/background">
+
+    <ImageView
+        android:id="@+id/logo_match_screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/gammelstads_title" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:text="All matches on field "
-        android:textSize="25sp"
+        android:layout_below="@+id/logo_match_screen"
          />
 
-    <TextView
-        android:id="@+id/nr"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Nr"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="95dp"
-        />
+        android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Group"
-        android:layout_toRightOf="@+id/nr"
-        android:layout_alignTop="@+id/nr"
-        android:layout_marginLeft="10dp"
-        />
+        <ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView
+            android:id="@+id/loadingMatchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/matches"
+            android:layout_alignEnd="@id/matches"
+            android:layout_alignLeft="@id/matches"
+            android:layout_alignRight="@id/matches"
+            android:layout_alignStart="@id/matches"
+            android:layout_alignTop="@id/matches"
+            android:layout_marginTop="0dp" />
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time"
-        android:layout_toRightOf="@+id/group"
-        android:layout_alignTop="@+id/group"
-        android:layout_marginLeft="5dp"
-       />
+        <ListView
+            android:id="@+id/matches"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="114dp"
+            android:padding="5dp"
+            android:background="@drawable/border_listview"
+            />
 
-    <TextView
-        android:id="@+id/match"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="7"
-        android:text="Match"
-        android:layout_toRightOf="@+id/time"
-        android:layout_alignTop="@+id/time"
-        android:layout_marginLeft="100dp"
-       />
-
-
-
-    <ListView
-        android:id="@+id/matches"
-        android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="114dp"
-        android:padding="5dp"
-        android:background="@drawable/border_listview"
-        />
-
+    </RelativeLayout>
 
     <Button
         android:id="@+id/team2"
