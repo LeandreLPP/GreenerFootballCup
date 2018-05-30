@@ -36,6 +36,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ConfirmationDialogFragment;
@@ -86,7 +91,6 @@ public class ReportActivity extends AppCompatActivity {
         fileImgResult = new File(dir, "pictureResults.jpg");
         fileImgFairplay = new File(dir, "pictureFairplay.jpg");
         backupFile = new File(dir, "backup.jpg");
-        fileReport = new File(dir, "report.pdf");
 
         imageViewResult.setOnClickListener((c) -> {
             if(fileImgResult.exists())
@@ -388,8 +392,16 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private void sendReport() {
-        String subject = "Results for the match"; // TODO generate coherent text
-        String text = "Result"; //TODO generate coherent text
+        Match match = MatchData.getInstance().getMatch();
+        Date today = Calendar.getInstance().getTime();
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        String dateStr = format.format(today);
+        String subject = "Results match "+match.getNumber()+" at "+
+        match.getTime()+", group "+match.getGroup();
+        String text = "Result for the match number "+match.getNumber()+
+                " opposing "+ match.getFirstTeam()+" and "+match.getSecondTeam()+" of the group "+match.getGroup()+
+                " the "+dateStr+ " at "+match.getTime()+ " on the field "+MatchData.getInstance().getField().getFullName()+"."+
+                "\n\nMail generated automatically by the \"Greener Football Cup\" application.";
 
         sendEmail(this, LoginDatas.getInstance().getEmailAddress(), subject, text, fileReport);
     }
@@ -424,30 +436,27 @@ public class ReportActivity extends AppCompatActivity {
             boolean ret = false;
             try
             {
-                /*Match match = new Match("Number", "Group", "time", "Team1", "Team2", "Team1URL", "Team2URL");
-                Team teamA, teamB;
-                teamA = new Team();
-                teamA.addPlayer(new Player("T1J1", "11"));
-                teamA.addPlayer(new Player("T1J2", "11"));
-                teamA.addPlayer(new Player("T1J3", "11"));
-                teamA.addPlayer(new Player("T1J4", "11"));
-                teamA.addPlayer(new Player("T1J5", "11"));
-                teamB = new Team();
-                teamB.addPlayer(new Player("T2J1", "22"));
-                teamB.addPlayer(new Player("T2J2", "22"));
-                teamB.addPlayer(new Player("T2J3", "22"));
-                teamB.addPlayer(new Player("T2J4", "22"));
-                File signatureTeamA, signatureTeamB;
-                signatureTeamA = signatureTeamB = null;*/
                 Match match = MatchData.getInstance().getMatch();
                 Team teamA = MatchData.getInstance().getTeamA();
                 Team teamB = MatchData.getInstance().getTeamB();
                 Field field = MatchData.getInstance().getField();
                 File signatureTeamA = MatchData.getInstance().getSignatureTeamA();
                 File signatureTeamB = MatchData.getInstance().getSignatureTeamB();
+                File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                Date today = Calendar.getInstance().getTime();
+                DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                String dateStr = format.format(today);
+                String fileName = "MATCH_"+match.getNumber()+"_"+dateStr+"_"+
+                                  match.getTime()+"_"+match.getGroup()+".pdf";
+                fileReport = new File(dir, fileName);
                 ret = ReportGenerator.generate(fileReport, fileImgResult, fileImgFairplay,
                                                match, field, teamA, teamB,
                                                signatureTeamA, signatureTeamB);
+
+                for(File file : dir.listFiles()) // Clean up old reports generated
+                    if(file.getName().endsWith(".pdf") &&
+                       !file.getAbsolutePath().equals(fileReport.getAbsolutePath()))
+                        file.delete();
             }
             catch (FileNotFoundException e)
             {
