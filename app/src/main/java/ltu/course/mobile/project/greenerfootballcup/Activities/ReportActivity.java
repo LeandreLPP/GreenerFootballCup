@@ -97,7 +97,7 @@ public class ReportActivity extends AppCompatActivity {
             else
                 takePicture(REQUEST_CAPTURE_RESULT);});
         imageViewFairplay.setOnClickListener((c) -> {
-            if(fileImgResult.exists())
+            if(fileImgFairplay.exists())
                 openPopupImage(fileImgFairplay, REQUEST_CAPTURE_FAIRPLAY);
             else
                 takePicture(REQUEST_CAPTURE_FAIRPLAY);});
