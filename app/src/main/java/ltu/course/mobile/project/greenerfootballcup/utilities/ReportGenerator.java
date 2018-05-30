@@ -90,7 +90,7 @@ public abstract class ReportGenerator {
 
 
         //Create Table2 object.
-        float yTable = 270;
+        float yTable = 110 + fairPlayImage.getHeight() + 20;
         Table2 table = new Table2(0, yTable, width, height-yTable);
 
         // Add columns to the table
@@ -108,9 +108,10 @@ public abstract class ReportGenerator {
         row1.getCells().add(match.getFirstTeam()).setColumnSpan(2);
         row1.getCells().add(match.getSecondTeam()).setColumnSpan(2);
 
-        int maxRow = Math.max(teamA.getNumberPlayer(), teamB.getNumberPlayer());
-        int maxFirstPage = Math.min(maxRow, 18);
-        int nbSecondPage = maxRow - maxFirstPage;
+        int nbRowTotal = Math.max(teamA.getNumberPlayer(), teamB.getNumberPlayer());
+        int nbMaxRowPage1 = (int) Math.floor((height - (yTable + 100)) / 20.0);
+        int maxFirstPage = Math.min(nbRowTotal, nbMaxRowPage1);
+        int nbSecondPage = nbRowTotal - maxFirstPage;
         for(int i = 0; i < maxFirstPage; i++)
         {
             Row2 row2 = table.getRows().add(20);
@@ -182,7 +183,7 @@ public abstract class ReportGenerator {
             row21.getCells().add(match.getFirstTeam()).setColumnSpan(2);
             row21.getCells().add(match.getSecondTeam()).setColumnSpan(2);
 
-            for(int i = maxFirstPage; i < maxRow; i++)
+            for(int i = maxFirstPage; i < nbRowTotal; i++)
             {
                 Row2 row22 = table2.getRows().add(20);
                 if(teamA.getNumberPlayer() > i)
