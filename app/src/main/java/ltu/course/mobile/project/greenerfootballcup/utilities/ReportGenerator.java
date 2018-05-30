@@ -74,7 +74,7 @@ public abstract class ReportGenerator {
         page.getElements().add(subtitleFieldLabel);
 
         float scale = 0.2f;
-        Label resultImageLabel = new Label("Results: ", 0, 120, width / 2, 20,
+        Label resultImageLabel = new Label("Results: ", 0, 90, width / 2, 20,
                                            Font.getHelvetica(), 16, TextAlign.LEFT);
         Image resultImage = new Image(resultPicture.getAbsolutePath(), 0, 110, scale);
 
