@@ -16,24 +16,18 @@
 
     </com.github.barteksc.pdfviewer.PDFView>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textViewPath"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:text="GreenerFootballCup/Report.pdf"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse" />
 
-        <Button
-            android:id="@+id/buttonRegenerate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_regen_report" />
-
-        <Button
-            android:id="@+id/buttonOpen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_open_label" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/buttonRegenerate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_regen_report" />
 
 </LinearLayout>

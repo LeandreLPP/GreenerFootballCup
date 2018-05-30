@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -157,7 +158,6 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -197,8 +197,6 @@ public class ReportActivity extends AppCompatActivity {
         popupWindow.showAtLocation(imageViewFairplay, Gravity.CENTER, 0, 0);
     }
 
-
-    private PDFView pdfView;
     private void openPopupReport() {
         LayoutInflater layoutInflater = getLayoutInflater();
         View popupView = layoutInflater.inflate(R.layout.popup_report, null);
@@ -207,7 +205,17 @@ public class ReportActivity extends AppCompatActivity {
                                       WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
 
-        pdfView = (PDFView) popupView.findViewById(R.id.pdfView);
+        PDFView pdfView = (PDFView) popupView.findViewById(R.id.pdfView);
+        Button buttonRegen = (Button) popupView.findViewById(R.id.buttonRegenerate);
+        TextView textViewPath = (TextView) popupView.findViewById(R.id.textViewPath);
+
+        buttonRegen.setOnClickListener((c) -> {
+            new GenerateReportTask().execute();
+            popupWindow.dismiss();
+        });
+
+        textViewPath.setText(fileReport.getAbsolutePath());
+
         popupView.setOnClickListener((c) ->  popupWindow.dismiss());
 
         popupWindow.showAtLocation(imageViewFairplay, Gravity.CENTER, 0, 0);
@@ -453,7 +461,7 @@ public class ReportActivity extends AppCompatActivity {
             super.onPreExecute();
             buttonPreviewReport.setEnabled(false);
             buttonSendReport.setEnabled(false);
-            Toast.makeText(ReportActivity.this, "Started generating", Toast.LENGTH_LONG).show();
+            Toast.makeText(ReportActivity.this, "Report generation started.", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -491,14 +499,21 @@ public class ReportActivity extends AppCompatActivity {
             super.onPostExecute(success);
             if(success)
             {
-                Toast.makeText(ReportActivity.this, "Report generation complete!", Toast.LENGTH_LONG).show();
+                Toast.makeText(ReportActivity.this, "Report generation complete! File saved at "+fileReport.getAbsolutePath()
+                        , Toast.LENGTH_LONG).show();
                 imageViewReport.fromFile(fileReport)
                                .enableDoubletap(false)
                                .load();
                 buttonSendReport.setEnabled(true);
+                buttonPreviewReport.setOnClickListener((c)->openPopupReport());
+                buttonPreviewReport.setText(R.string.button_preview_report);
                 buttonPreviewReport.setEnabled(true);
-            } else
+            } else {
                 Toast.makeText(ReportActivity.this, "Report generation failed.", Toast.LENGTH_LONG).show();
+                buttonPreviewReport.setOnClickListener((c)->new GenerateReportTask().execute());
+                buttonPreviewReport.setText(R.string.button_regen_report);
+                buttonPreviewReport.setEnabled(true);
+            }
         }
     }
 

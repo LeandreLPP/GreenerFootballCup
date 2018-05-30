@@ -66,5 +66,4 @@
     <string name="storage_permission_confirmation">The application needs to acces the files of your device to save the match report.</string>
     <string name="permission_confirmation">To scan the result card and save the generated report, this application needs to access the camera and the files of this device. Please approve the permission requests.</string>
     <string name="button_regen_report">Regenerate</string>
-    <string name="button_open_label">Open</string>
 </resources>
