@@ -73,15 +73,17 @@ public abstract class ReportGenerator {
         page.getElements().add(subtitleDateLabel);
         page.getElements().add(subtitleFieldLabel);
 
-        float scale = 0.2f;
         Label resultImageLabel = new Label("Results: ", 0, 90, width / 2, 20,
                                            Font.getHelvetica(), 16, TextAlign.LEFT);
-        Image resultImage = new Image(resultPicture.getAbsolutePath(), 0, 110, scale);
+        Image resultImage = new Image(resultPicture.getAbsolutePath(), 0, 110, 1);
+        float scaleResult = (width/2 - 15)/resultImage.getWidth();
+        resultImage = new Image(resultPicture.getAbsolutePath(), 0, 110, scaleResult);
 
-        Label fairPlayImageLabel = new Label("Fairplay results: ", width / 2 + 30f, 90, width / 2, 20,
+        Label fairPlayImageLabel = new Label("Fairplay results: ", width / 2 + 20f, 90, width / 2, 20,
                                              Font.getHelvetica(), 16, TextAlign.LEFT);
-        Image fairPlayImage = new Image(fairplayPicture.getAbsolutePath(), width / 2 + 30f, 110,
-                                        scale);
+        Image fairPlayImage = new Image(fairplayPicture.getAbsolutePath(), width / 2 + 20f, 110, 1);
+        float scaleFairplay = (width/2 - 15)/fairPlayImage.getWidth();
+        fairPlayImage = new Image(fairplayPicture.getAbsolutePath(), width / 2 + 20f, 110, scaleFairplay);
 
         page.getElements().add(resultImageLabel);
         page.getElements().add(resultImage);
@@ -90,7 +92,8 @@ public abstract class ReportGenerator {
 
 
         //Create Table2 object.
-        float yTable = 110 + fairPlayImage.getHeight() + 20;
+        float heightMax = Math.max(resultImage.getHeight(), fairPlayImage.getHeight());
+        float yTable = 110 + heightMax + 20;
         Table2 table = new Table2(0, yTable, width, height-yTable);
 
         // Add columns to the table
@@ -141,7 +144,7 @@ public abstract class ReportGenerator {
         // Add the table to the page
         page.getElements().add(table);
 
-        float ySignature = 300+20*maxFirstPage+20;
+        float ySignature = yTable+20*maxFirstPage+50;
 
         float scaleSignature = 0.1f;
         String signatureStr = "Coach's signature: ";
