@@ -48,7 +48,7 @@ public class TeamActivity extends AppCompatActivity{
 
     private MediaPlayer mMediaPlayer;
 
-    private String url = "http://teamplaycup.se/cup/?team&home=kurirenspelen/17&scope=A-2&name=Notvikens%20IK" ;
+    private String url ;
     private ListView playerList;
     private Player[] players;
     private PlayerAdapter playerAdapter;
