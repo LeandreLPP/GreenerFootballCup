@@ -32,9 +32,6 @@ public class ConfigurationView extends TableLayout {
     public void initialize(){
         inflate(getContext(), R.layout.configuration_view, this);
 
-        toggle_max_overaged_player = findViewById(R.id.toggle_max_overaged_player);
-        toggle_max_number_player = findViewById(R.id.toggle_max_number_player);
-
         edt_max_age = findViewById(R.id.edt_max_age);
         edt_max_overaged_player = findViewById(R.id.edt_max_overaged_player);
         edt_max_number_player = findViewById(R.id.edt_max_number_player);
@@ -43,18 +40,5 @@ public class ConfigurationView extends TableLayout {
         edt_max_age.setText(String.valueOf(LoginDatas.getInstance().getAgeThreshold()));
         edt_max_number_player.setText(String.valueOf(LoginDatas.getInstance().getMaxPlayer()));
         edt_max_overaged_player.setText(String.valueOf(LoginDatas.getInstance().getMaxOveragedPlayer()));
-
-        edt_max_age.setOnFocusChangeListener((v, hasFocus) -> {
-            LoginDatas.getInstance().setAgeThreshold(Integer.parseInt( edt_max_age.getText().toString()));
-        });
-
-        edt_max_number_player.setOnFocusChangeListener((v, hasFocus) -> {
-            LoginDatas.getInstance().setMaxPlayer(Integer.parseInt( edt_max_number_player.getText().toString()));
-        });
-
-        edt_max_overaged_player.setOnFocusChangeListener((v, hasFocus) -> {
-            LoginDatas.getInstance().setMaxOveragedPlayer(Integer.parseInt( edt_max_overaged_player.getText().toString()));
-        });
-
     }
 }
