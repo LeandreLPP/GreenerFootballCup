@@ -204,7 +204,8 @@ public class MatchActivity extends AppCompatActivity {
                 matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Match xMatch = matchList.get(position);
+                        if(position <= 0) return;
+                        Match xMatch = matchList.get(position - 1);
 
                         registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
                         registerTeam1.setEnabled(true);
