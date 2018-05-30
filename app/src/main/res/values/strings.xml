@@ -31,7 +31,8 @@
     <string name="btnConfirm">Confirm</string>
     <string name="btnCancel">Cancel</string>
     <string name="wrongAdminCode">Wrong admin code</string>
-    <string name="signatureFileName">/signature.png"</string>
+    <string name="signatureTeamAFileName">/signatureA.png"</string>
+    <string name="signatureTeamBFileName">/signatureB.png"</string>
 
     <string name="maxOlderPlayerOvershoot">You have selected too many overaged players, the limit is </string>
     <string name="maxPlayerOvershoot">Too many players selected</string>

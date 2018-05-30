@@ -14,19 +14,28 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.MatchAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class MatchActivity extends AppCompatActivity {
 
+    public static final String CODE_TEAM = "team_code";
+    public static final int CODE_TEAM_A = 1234;
+    public static final int CODE_TEAM_B = 5678;
     private ListView matchListView;
     private ArrayList<Match> matchList;
     private Button registerTeam1;
@@ -48,7 +57,7 @@ public class MatchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_match);
 
         title = (TextView) findViewById(R.id.title);
-        fieldArg = getIntent().getStringExtra("FIELD_ARGUMENT_ID");
+        fieldArg = getIntent().getStringExtra(FieldActivity.FIELD_ARGUMENT_ID);
 
         matchList = new ArrayList<>();
         matchListView = (ListView) findViewById(R.id.matches);
@@ -70,10 +79,12 @@ public class MatchActivity extends AppCompatActivity {
                 {
                     Intent intent = new Intent(getApplicationContext(), TeamActivity.class);
                     intent.putExtra(TEAM_URL, selectedMatch.getFirstTeamURL());
-                    startActivity(intent);
+                    intent.putExtra(CODE_TEAM, CODE_TEAM_A);
+                    startActivityForResult(intent, CODE_TEAM_A);
                 }
             }
         });
+        registerTeam1.setEnabled(false);
 
         //TODO: if team configured, disable button
         registerTeam2.setOnClickListener(new View.OnClickListener() {
@@ -84,19 +95,25 @@ public class MatchActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), TeamActivity.class);
                     //passing the whole URL of the selected team
                     intent.putExtra(TEAM_URL, selectedMatch.getSecondTeamURL());
-                    startActivity(intent);
+                    intent.putExtra(CODE_TEAM, CODE_TEAM_B);
+                    startActivityForResult(intent, CODE_TEAM_B);
                 }
             }
         });
+        registerTeam2.setEnabled(false);
 
         //TODO: what information to pass to the next activity ?
         registerResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+                MatchData.getInstance().setField(new Field(fieldArg));
+                MatchData.getInstance().setMatch(selectedMatch);
+
                 startActivity(intent);
             }
         });
+        registerResult.setEnabled(false);
     }
 
     private class fillList extends AsyncTask<String, Integer, Utilities.Result> {
@@ -107,9 +124,11 @@ public class MatchActivity extends AppCompatActivity {
             result.success = false;
             try
             {
-                // url = ("http://www.teamplaycup.se/cup/?games&home=kurirenspelen/" + LoginDatas.KEY_YEAR + "&scope=all&arena=" + fieldArg + "&field=");
+                DateFormat format = new SimpleDateFormat("yy", Locale.getDefault());
+                String yearStr = format.format(LoginDatas.getInstance().getYear());
+                url = ("http://www.teamplaycup.se/cup/?games&home=kurirenspelen/" + yearStr + "&scope=all&arena=" + fieldArg + "&field=");
                 //the bottom url is a test URL - upper URL is for the finished App
-                url = "http://teamplaycup.se/cup/?games&home=kurirenspelen/17&scope=all&arena=A%2011-manna%20(Gstad)&field=";
+                //url = "http://teamplaycup.se/cup/?games&home=kurirenspelen/17&scope=all&arena=A%2011-manna%20(Gstad)&field=";
                 HTMLdocument = ParserHTML.getHTMLDocument(url);
                 Elements content = HTMLdocument.select("h4");
                 Element matchNode = null;
@@ -125,8 +144,9 @@ public class MatchActivity extends AppCompatActivity {
                         Elements sTeams = data.get(3).select("a");
                         matchList.add(new Match(data.get(0).text(), data.get(1).text(),
                                                 data.get(2).text(), sTeams.get(0).text(),
-                                                sTeams.get(1).text(), sTeams.get(0).attr("href"),
-                                                sTeams.get(1).attr("href")));
+                                                sTeams.get(1).text(),
+                                                "http://teamplaycup.se/cup/" + sTeams.get(0).attr("href"),
+                                                "http://teamplaycup.se/cup/" + sTeams.get(1).attr("href")));
                     }
                 }
 
@@ -159,10 +179,33 @@ public class MatchActivity extends AppCompatActivity {
                     Match xMatch = matchList.get(position);
 
                     registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
+                    registerTeam1.setEnabled(true);
                     registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
+                    registerTeam2.setEnabled(true);
                     selectedMatch = xMatch;
+                    MatchData.getInstance().setTeamA(null);
+                    MatchData.getInstance().setTeamB(null);
+                    MatchData.getInstance().setSignatureTeamA(null);
+                    MatchData.getInstance().setSignatureTeamB(null);
+                    checkTeamConfigured();
                 }
             });
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK)
+            checkTeamConfigured();
+    }
+
+    private void checkTeamConfigured() {
+        MatchData ins = MatchData.getInstance();
+        boolean ok = ins.getTeamA() != null
+                     && ins.getTeamB() != null
+                     && ins.getSignatureTeamA() != null
+                     && ins.getSignatureTeamB() != null;
+        registerResult.setEnabled(ok);
     }
 }

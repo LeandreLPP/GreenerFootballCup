@@ -37,7 +37,7 @@ public class Player {
     }
 
     public int getYear(){
-        String tmp = age.substring(0,1);
+        String tmp = age.substring(0,2);
         return Integer.parseInt(tmp);
     }
 

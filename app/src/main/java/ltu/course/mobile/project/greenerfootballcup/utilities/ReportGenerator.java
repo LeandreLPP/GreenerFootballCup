@@ -17,12 +17,14 @@ import com.cete.dynamicpdf.pageelements.Table2;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 
 public abstract class ReportGenerator {
     public static boolean generate(File outputFile, File resultPicture, File fairplayPicture,
-                                   Match match, Team teamA, Team teamB,
+                                   Match match, Field field,
+                                   Team teamA, Team teamB,
                                    File signatureTeamA, File signatureTeamB) throws FileNotFoundException {
         // Create a document and set it's properties
         Document objDocument = new Document();

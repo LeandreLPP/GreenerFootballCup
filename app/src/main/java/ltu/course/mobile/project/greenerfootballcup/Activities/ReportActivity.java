@@ -29,6 +29,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.cete.dynamicpdf.io.M;
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
@@ -39,6 +40,8 @@ import java.io.IOException;
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ConfirmationDialogFragment;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
@@ -421,7 +424,7 @@ public class ReportActivity extends AppCompatActivity {
             boolean ret = false;
             try
             {
-                Match match = new Match("Number", "Group", "time", "Team1", "Team2", "Team1URL", "Team2URL");
+                /*Match match = new Match("Number", "Group", "time", "Team1", "Team2", "Team1URL", "Team2URL");
                 Team teamA, teamB;
                 teamA = new Team();
                 teamA.addPlayer(new Player("T1J1", "11"));
@@ -435,9 +438,15 @@ public class ReportActivity extends AppCompatActivity {
                 teamB.addPlayer(new Player("T2J3", "22"));
                 teamB.addPlayer(new Player("T2J4", "22"));
                 File signatureTeamA, signatureTeamB;
-                signatureTeamA = signatureTeamB = null;
+                signatureTeamA = signatureTeamB = null;*/
+                Match match = MatchData.getInstance().getMatch();
+                Team teamA = MatchData.getInstance().getTeamA();
+                Team teamB = MatchData.getInstance().getTeamB();
+                Field field = MatchData.getInstance().getField();
+                File signatureTeamA = MatchData.getInstance().getSignatureTeamA();
+                File signatureTeamB = MatchData.getInstance().getSignatureTeamB();
                 ret = ReportGenerator.generate(fileReport, fileImgResult, fileImgFairplay,
-                                               match, teamA, teamB,
+                                               match, field, teamA, teamB,
                                                signatureTeamA, signatureTeamB);
             }
             catch (FileNotFoundException e)

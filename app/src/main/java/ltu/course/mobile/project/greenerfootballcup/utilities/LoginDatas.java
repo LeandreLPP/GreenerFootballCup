@@ -14,6 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
@@ -72,7 +76,20 @@ public class LoginDatas {
 
 
     //Get the year in the preferred file and then create a Date using it
-    public Date getYear() { return new Date(Integer.parseInt(pref.getString(KEY_YEAR,null)), 0, 0); }
+    public Date getYear() {
+        DateFormat format = new SimpleDateFormat("yyyy");
+        Date ret;
+        try
+        {
+            ret = format.parse(pref.getString(KEY_YEAR,null));
+        }
+        catch (ParseException e)
+        {
+            ret = Calendar.getInstance().getTime();
+            e.printStackTrace();
+        }
+        return ret;
+    }
 
     //return the preferred admin_code
     public String getAdminCode() { return pref.getString(KEY_ADMIN_CODE,context.getString(R.string.default_password)); }

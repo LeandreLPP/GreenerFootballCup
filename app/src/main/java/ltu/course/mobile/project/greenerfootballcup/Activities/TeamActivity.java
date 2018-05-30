@@ -35,6 +35,7 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.Configu
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.DrawingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdapter;
@@ -64,6 +65,9 @@ public class TeamActivity extends AppCompatActivity{
     private boolean noMaxOveragedPlayer;
     private boolean signed;
 
+    private boolean isTeamA;
+    private String signatureFileName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +76,7 @@ public class TeamActivity extends AppCompatActivity{
         Intent intent = getIntent();
         url = intent.getStringExtra(MatchActivity.TEAM_URL);
 
+        isTeamA = intent.getIntExtra(MatchActivity.CODE_TEAM, MatchActivity.CODE_TEAM_A) == MatchActivity.CODE_TEAM_A;
 
         players = null;
         team = new Team();
@@ -96,8 +101,18 @@ public class TeamActivity extends AppCompatActivity{
         btnConfirm.setOnClickListener(v -> {
             if( team.getNumberPlayer() > 0 && signed && ((noMaxOveragedPlayer && noMaxPlayer) || (noMaxPlayer && !noMaxOveragedPlayer && !team.maxOlderPlayerOvershoot()) || (!noMaxPlayer && !team.maxPlayerOvershoot() && noMaxOveragedPlayer) || (!team.maxOlderPlayerOvershoot() && !team.maxPlayerOvershoot()))){
                 releaseMediaPlayer();
-                Intent myIntent = new Intent(getApplicationContext(), ReportActivity.class);
-                startActivity(myIntent);
+                if(isTeamA)
+                {
+                    MatchData.getInstance().setTeamA(team);
+                    MatchData.getInstance().setSignatureTeamA(new File(signatureFileName));
+                }
+                else
+                {
+                    MatchData.getInstance().setTeamB(team);
+                    MatchData.getInstance().setSignatureTeamB(new File(signatureFileName));
+                }
+                setResult(RESULT_OK);
+                finish();
             }else {
                 if (team.maxPlayerOvershoot() && !noMaxPlayer)
                     Toast.makeText(getApplicationContext(), R.string.maxPlayerOvershoot, Toast.LENGTH_SHORT).show();
@@ -170,7 +185,9 @@ public class TeamActivity extends AppCompatActivity{
 
     public void saveSignature(Bitmap bitmap){
         try {
-            final FileOutputStream out = new FileOutputStream(new File(getFilesDir().getPath() +R.string.signatureFileName ));
+            int id = isTeamA ? R.string.signatureTeamAFileName : R.string.signatureTeamBFileName;
+            signatureFileName = getFilesDir().getPath() + getResources().getString(id);
+            final FileOutputStream out = new FileOutputStream(new File(signatureFileName ));
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.flush();
             out.close();
