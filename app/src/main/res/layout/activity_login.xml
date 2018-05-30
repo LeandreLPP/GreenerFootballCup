@@ -64,7 +64,7 @@
         android:layout_marginTop="5dp"
         android:background="@color/White"
         android:textColor="@color/Black"
-        android:inputType="text" />
+        android:inputType="textPassword" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -84,7 +84,7 @@
         android:layout_marginTop="5dp"
         android:background="@color/White"
         android:textColor="@color/Black"
-        android:inputType="text" />
+        android:inputType="textPassword" />
 
     <TextView
         android:layout_width="wrap_content"
