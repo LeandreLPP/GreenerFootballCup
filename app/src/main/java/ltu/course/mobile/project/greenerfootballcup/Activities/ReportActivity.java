@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -29,11 +30,9 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.cete.dynamicpdf.io.M;
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -48,12 +47,11 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ReportGenerator;
 
 public class ReportActivity extends AppCompatActivity {
-    private static final int REQUEST_CAMERA_PERMISSION = 1324;
+    private static final int REQUEST_PERMISSIONS = 1324;
     private static final int REQUEST_CAPTURE_RESULT = 1526;
     private static final int REQUEST_CAPTURE_FAIRPLAY = 1527;
 
@@ -68,16 +66,16 @@ public class ReportActivity extends AppCompatActivity {
 
     private PopupWindow popupWindow;
 
-    private boolean hasAuthorisationCamera;
     private GenerateReportTask generateReportTask;
     private ProgressBar progressBarResult, progressBarFairplay;
+    private boolean hasAuthorisations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
-        hasAuthorisationCamera = false;
+        hasAuthorisations = false;
 
         imageViewResult = (ImageView) findViewById(R.id.imageViewResult);
         imageViewFairplay = (ImageView) findViewById(R.id.imageViewFairplay);
@@ -105,7 +103,6 @@ public class ReportActivity extends AppCompatActivity {
 
         new LoadImage().execute(new Param(fileImgResult, imageViewResult, progressBarResult));
         new LoadImage().execute(new Param(fileImgFairplay, imageViewFairplay, progressBarFairplay));
-        // TODO report image
 
         buttonSendReport = (Button) findViewById(R.id.buttonSendReport);
         buttonSendReport.setOnClickListener((c)->sendReport());
@@ -118,54 +115,64 @@ public class ReportActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkAuthorisationCamera();
+        checkAuthorisations();
     }
-
-    private void checkAuthorisationCamera(){
+    private void checkAuthorisations(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_GRANTED)
+            == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                   == PackageManager.PERMISSION_GRANTED
+                && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED))
         {
-            hasAuthorisationCamera = true;
+            hasAuthorisations = true;
         }
         else
         {
-            hasAuthorisationCamera = false;
+            hasAuthorisations = false;
+            String[] permissions = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) ?
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE} :
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                                                    Manifest.permission.CAMERA))
+                                                                    Manifest.permission.CAMERA)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                                                           Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                        ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                                                Manifest.permission.READ_EXTERNAL_STORAGE)))
             {
                 ConfirmationDialogFragment
-                        .newInstance(R.string.camera_permission_confirmation,
-                                     new String[]{Manifest.permission.CAMERA},
-                                     REQUEST_CAMERA_PERMISSION,
-                                     R.string.camera_permission_not_granted)
+                        .newInstance(R.string.permission_confirmation,
+                                     permissions,
+                                     REQUEST_PERMISSIONS,
+                                     R.string.permission_confirmation)
                         .show(getSupportFragmentManager(), FRAGMENT_DIALOG);
             }
             else
             {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
-                                                  REQUEST_CAMERA_PERMISSION);
+                ActivityCompat.requestPermissions(this, permissions,REQUEST_PERMISSIONS);
             }
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_CAMERA_PERMISSION:
-                hasAuthorisationCamera = false;
-                if (permissions.length != 1 || grantResults.length != 1) {
-                    throw new RuntimeException("Error on requesting camera permission.");
+            case REQUEST_PERMISSIONS:
+                hasAuthorisations = true;
+                if (grantResults.length <= 0) {
+                    hasAuthorisations = false;
                 }
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    hasAuthorisationCamera = true;
-                }
-                else {
+                for(int result : grantResults)
+                    if(result != PackageManager.PERMISSION_GRANTED)
+                        hasAuthorisations = false;
+                if(!hasAuthorisations) {
                     Toast.makeText(this, R.string.camera_permission_not_granted,
-                                   Toast.LENGTH_SHORT).show();
+                                   Toast.LENGTH_LONG).show();
                 }
-                // No need to start camera here; it is handled by onResume
                 break;
         }
     }
@@ -207,8 +214,8 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private void takePicture(int intentID) {
-        checkAuthorisationCamera();
-        if(!hasAuthorisationCamera){
+        checkAuthorisations();
+        if(!hasAuthorisations){
             Toast.makeText(this, R.string.camera_permission_not_granted, Toast.LENGTH_LONG).show();
             return;
         }
@@ -324,7 +331,7 @@ public class ReportActivity extends AppCompatActivity {
                                                      ExifInterface.ORIENTATION_UNDEFINED);
 
                 if(orientation == ExifInterface.ORIENTATION_ROTATE_180)
-                        bmp = rotateImage(bmp, 180);
+                    bmp = rotateImage(bmp, 180);
 
                 FileOutputStream fos = new FileOutputStream(imageFile);
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -382,6 +389,11 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private void checkReportCompleteAndGenerate() {
+        checkAuthorisations();
+        if(!hasAuthorisations){
+            Toast.makeText(this, R.string.storage_permission_confirmation, Toast.LENGTH_LONG).show();
+            return;
+        }
         if(fileImgResult.exists() && fileImgFairplay.exists())
         {
             if(generateReportTask != null)
@@ -397,11 +409,11 @@ public class ReportActivity extends AppCompatActivity {
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String dateStr = format.format(today);
         String subject = "Results match "+match.getNumber()+" at "+
-        match.getTime()+", group "+match.getGroup();
+                         match.getTime()+", group "+match.getGroup();
         String text = "Result for the match number "+match.getNumber()+
-                " opposing "+ match.getFirstTeam()+" and "+match.getSecondTeam()+" of the group "+match.getGroup()+
-                " the "+dateStr+ " at "+match.getTime()+ " on the field "+MatchData.getInstance().getField().getFullName()+"."+
-                "\n\nMail generated automatically by the \"Greener Football Cup\" application.";
+                      " opposing "+ match.getFirstTeam()+" and "+match.getSecondTeam()+" of the group "+match.getGroup()+
+                      " the "+dateStr+ " at "+match.getTime()+ " on the field "+MatchData.getInstance().getField().getFullName()+"."+
+                      "\n\nMail generated automatically by the \"Greener Football Cup\" application.";
 
         sendEmail(this, LoginDatas.getInstance().getEmailAddress(), subject, text, fileReport);
     }
@@ -442,7 +454,8 @@ public class ReportActivity extends AppCompatActivity {
                 Field field = MatchData.getInstance().getField();
                 File signatureTeamA = MatchData.getInstance().getSignatureTeamA();
                 File signatureTeamB = MatchData.getInstance().getSignatureTeamB();
-                File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+                File dir = getReportSaveDir();
                 Date today = Calendar.getInstance().getTime();
                 DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                 String dateStr = format.format(today);
@@ -452,13 +465,8 @@ public class ReportActivity extends AppCompatActivity {
                 ret = ReportGenerator.generate(fileReport, fileImgResult, fileImgFairplay,
                                                match, field, teamA, teamB,
                                                signatureTeamA, signatureTeamB);
-
-                for(File file : dir.listFiles()) // Clean up old reports generated
-                    if(file.getName().endsWith(".pdf") &&
-                       !file.getAbsolutePath().equals(fileReport.getAbsolutePath()))
-                        file.delete();
             }
-            catch (FileNotFoundException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -468,15 +476,32 @@ public class ReportActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            Toast.makeText(ReportActivity.this, "Generation completed: "+success, Toast.LENGTH_LONG).show();
             if(success)
             {
+                Toast.makeText(ReportActivity.this, "Report generation complete!", Toast.LENGTH_LONG).show();
                 imageViewReport.fromFile(fileReport)
                                .enableDoubletap(false)
                                .load();
                 buttonSendReport.setEnabled(true);
                 buttonPreviewReport.setEnabled(true);
-            }
+            } else
+                Toast.makeText(ReportActivity.this, "Report generation failed.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private File getReportSaveDir() {
+        checkAuthorisations();
+        if(!hasAuthorisations){
+            Toast.makeText(this, R.string.storage_permission_confirmation, Toast.LENGTH_LONG).show();
+            return null;
+        }
+        File ret = new File(Environment.getExternalStorageDirectory(), "GreenerFootballCup");
+        if(!ret.exists() || !ret.isDirectory())
+        {
+            boolean deleted = ret.delete();
+            boolean maked = ret.mkdir();
+            boolean izok = deleted || maked;
+        }
+        return ret;
     }
 }
