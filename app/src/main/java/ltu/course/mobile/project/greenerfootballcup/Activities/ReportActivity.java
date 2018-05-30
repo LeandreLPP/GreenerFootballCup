@@ -46,6 +46,7 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ReportGenerator;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
 public class ReportActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 1324;
@@ -214,10 +215,8 @@ public class ReportActivity extends AppCompatActivity {
             try
             {
                 File file = getPictureFile(intentID);
-                Uri photoURI = FileProvider.getUriForFile(this,
-                                                          "ltu.course.mobile.project.greenerfootballcup.fileprovider",
-                                                          file);
-
+                //Uri photoURI = FileProvider.getUriForFile(this,"ltu.course.mobile.project.greenerfootballcup.fileprovider",file);
+                Uri photoURI = Uri.fromFile(file);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, intentID);
             }
@@ -256,9 +255,15 @@ public class ReportActivity extends AppCompatActivity {
             imgView = params[0].imgToLoad;
             try
             {
-                bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
-                int nh = (int) ( bmp.getHeight() * (2048.0 / bmp.getWidth()) );
-                bmp = Bitmap.createScaledBitmap(bmp, 2048,  nh, true);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+                int height = options.outHeight;
+                int width = options.outWidth;
+
+                int nh = (int) ( height * (1024.0 / width) );
+                bmp = Utilities.decodeSampledBitmapFromResource(file.getAbsolutePath(),1024,nh);
                 return bmp != null;
             }
             catch (Exception e)
@@ -310,11 +315,16 @@ public class ReportActivity extends AppCompatActivity {
             {
                 File imageFile = files[0];
 
-                Bitmap bmp = BitmapFactory.decodeFile(tempFile.getAbsolutePath());
 
-                int nh = (int) ( bmp.getHeight() * (2048.0 / bmp.getWidth()) );
-                bmp = Bitmap.createScaledBitmap(bmp, 2048,  nh, true);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
 
+                int height = options.outHeight;
+                int width = options.outWidth;
+                int nh = (int) ( height * (1024.0 / width) );
+
+                Bitmap bmp = Utilities.decodeSampledBitmapFromResource(tempFile.getAbsolutePath(),1024,nh);
                 ExifInterface ei = new ExifInterface(tempFile.getPath());
                 int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                                                      ExifInterface.ORIENTATION_UNDEFINED);
