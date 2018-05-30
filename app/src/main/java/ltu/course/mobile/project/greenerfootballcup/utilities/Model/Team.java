@@ -1,13 +1,18 @@
 package ltu.course.mobile.project.greenerfootballcup.utilities.Model;
 
-import android.content.Intent;
+import android.os.Build;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 
@@ -32,20 +37,15 @@ public class Team {
     public int getNumberOlderPlayers(){
         int i = 0;
         for (Player player : players) {
-            DateFormat format = new SimpleDateFormat("yy");
-            Date birthDate = null;
-            try
-            {
-                birthDate = format.parse(player.getYear()+"");
-            }
-            catch (ParseException e)
-            {
-                e.printStackTrace();
-            }
-            String yearStr =  new SimpleDateFormat("yyyy").format(LoginDatas.getInstance().getYear());
-            int currentYear = Integer.parseInt(yearStr);
-            int birthYear =  Integer.parseInt(new SimpleDateFormat("yyyy").format(birthDate));
-            int age = currentYear - birthYear;
+            Date birth = player.getDateOfBirth();
+            Date currentYear = LoginDatas.getInstance().getYear();
+
+            Calendar birthCal = Calendar.getInstance();
+            birthCal.setTime(birth);
+            Calendar currentCal = Calendar.getInstance();
+            currentCal.setTime(currentYear);
+
+            int age = currentCal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
             if(age > LoginDatas.getInstance().getAgeThreshold())
                 i++;
         }
