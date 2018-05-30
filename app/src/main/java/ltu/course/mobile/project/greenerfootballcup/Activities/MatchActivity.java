@@ -2,6 +2,7 @@ package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.util.Locale;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.MatchAdapter;
+import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
@@ -48,6 +50,8 @@ public class MatchActivity extends AppCompatActivity {
     private String Fieldname;
     private static MatchAdapter adapter;
     private Match selectedMatch;
+    private LoadingView loadingView;
+    private Handler handlerActivity;
 
     public static final String TEAM_URL = "FIELD";
 
@@ -61,12 +65,18 @@ public class MatchActivity extends AppCompatActivity {
 
         matchList = new ArrayList<>();
         matchListView = (ListView) findViewById(R.id.matches);
-
+        View header = (View)getLayoutInflater().inflate(R.layout.match_list_header,null);
+        matchListView.addHeaderView(header);
+        matchListView.setVisibility(View.INVISIBLE);
+        handlerActivity = new Handler();
         selectedMatch = null;
 
         registerTeam1 = (Button) findViewById(R.id.team1);
         registerTeam2 = (Button) findViewById(R.id.team2);
         registerResult = (Button) findViewById(R.id.register);
+
+        loadingView = findViewById(R.id.loadingMatchView);
+        loadingView.setMaxProgress(3);
 
         final fillList fillMatchList = new fillList();
         fillMatchList.execute();
@@ -119,6 +129,17 @@ public class MatchActivity extends AppCompatActivity {
     private class fillList extends AsyncTask<String, Integer, Utilities.Result> {
 
         @Override
+        protected void onPreExecute() {
+            loadingView.setOnClickListener(null);
+            loadingView.setLoadingText(R.string.loading);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            loadingView.updateBar(progress[0]);
+        }
+
+        @Override
         protected Utilities.Result doInBackground(String... strings) {
             Utilities.Result result = new Utilities.Result();
             result.success = false;
@@ -127,9 +148,13 @@ public class MatchActivity extends AppCompatActivity {
                 DateFormat format = new SimpleDateFormat("yy", Locale.getDefault());
                 String yearStr = format.format(LoginDatas.getInstance().getYear());
                 url = ("http://www.teamplaycup.se/cup/?games&home=kurirenspelen/" + yearStr + "&scope=all&arena=" + fieldArg + "&field=");
-                //the bottom url is a test URL - upper URL is for the finished App
-                //url = "http://teamplaycup.se/cup/?games&home=kurirenspelen/17&scope=all&arena=A%2011-manna%20(Gstad)&field=";
+                publishProgress(0);
+                handlerActivity.post(() -> {
+                    Utilities.checkInternetConnection(MatchActivity.this);
+                });
+                publishProgress(1);
                 HTMLdocument = ParserHTML.getHTMLDocument(url);
+                publishProgress(2);
                 Elements content = HTMLdocument.select("h4");
                 Element matchNode = null;
 
@@ -149,6 +174,7 @@ public class MatchActivity extends AppCompatActivity {
                                                 "http://teamplaycup.se/cup/" + sTeams.get(1).attr("href")));
                     }
                 }
+                publishProgress(3);
 
                 result.success = true;
 
@@ -169,27 +195,43 @@ public class MatchActivity extends AppCompatActivity {
         protected void onPostExecute(Utilities.Result result) {
             title.setText(Fieldname);
 
-            adapter = new MatchAdapter(matchList, getApplicationContext());
-            matchListView.setAdapter(adapter);
 
-            //display to be configured teams on buttons
-            matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Match xMatch = matchList.get(position);
+            if (result.success) {
+                title.setText(Fieldname);
+                adapter = new MatchAdapter(matchList, getApplicationContext());
+                matchListView.setAdapter(adapter);
+                //display to be configured teams on buttons
+                matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Match xMatch = matchList.get(position);
 
-                    registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
-                    registerTeam1.setEnabled(true);
-                    registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
-                    registerTeam2.setEnabled(true);
-                    selectedMatch = xMatch;
-                    MatchData.getInstance().setTeamA(null);
-                    MatchData.getInstance().setTeamB(null);
-                    MatchData.getInstance().setSignatureTeamA(null);
-                    MatchData.getInstance().setSignatureTeamB(null);
-                    checkTeamConfigured();
-                }
-            });
+                        registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
+                        registerTeam1.setEnabled(true);
+                        registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
+                        registerTeam2.setEnabled(true);
+                        selectedMatch = xMatch;
+                        MatchData.getInstance().setTeamA(null);
+                        MatchData.getInstance().setTeamB(null);
+                        MatchData.getInstance().setSignatureTeamA(null);
+                        MatchData.getInstance().setSignatureTeamB(null);
+                        checkTeamConfigured();
+                    }
+                });
+
+                matchListView.setVisibility(View.VISIBLE);
+                loadingView.setVisibility(View.INVISIBLE);
+            }
+            else {
+                loadingView.displayError(result.errorMessage);
+                loadingView.setOnClickListener((c) -> (new fillList()).execute());
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            loadingView.displayError(getString(R.string.loading_failed));
         }
     }
 
