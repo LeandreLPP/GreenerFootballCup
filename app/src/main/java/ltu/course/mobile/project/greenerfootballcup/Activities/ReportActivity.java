@@ -226,8 +226,11 @@ public class ReportActivity extends AppCompatActivity {
             try
             {
                 File file = getPictureFile(intentID);
-                //Uri photoURI = FileProvider.getUriForFile(this,"ltu.course.mobile.project.greenerfootballcup.fileprovider",file);
-                Uri photoURI = Uri.fromFile(file);
+                Uri photoURI;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    photoURI = FileProvider.getUriForFile(this,"ltu.course.mobile.project.greenerfootballcup.fileprovider",file);
+                else
+                    photoURI = Uri.fromFile(file);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, intentID);
             }
