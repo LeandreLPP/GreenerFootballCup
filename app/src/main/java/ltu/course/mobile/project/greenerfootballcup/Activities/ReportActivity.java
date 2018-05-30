@@ -69,7 +69,7 @@ public class ReportActivity extends AppCompatActivity {
     private PopupWindow popupWindow;
 
     private GenerateReportTask generateReportTask;
-    private ProgressBar progressBarResult, progressBarFairplay;
+    private ProgressBar progressBarResult, progressBarFairplay, progressBarPDF;
     private boolean hasAuthorisations;
 
     @Override
@@ -85,6 +85,7 @@ public class ReportActivity extends AppCompatActivity {
 
         progressBarResult = (ProgressBar) findViewById(R.id.progressBarResult);
         progressBarFairplay = (ProgressBar) findViewById(R.id.progressBarFairplay);
+        progressBarPDF = (ProgressBar) findViewById(R.id.progressBarPDF);
 
         File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -461,6 +462,7 @@ public class ReportActivity extends AppCompatActivity {
             super.onPreExecute();
             buttonPreviewReport.setEnabled(false);
             buttonSendReport.setEnabled(false);
+            progressBarPDF.setVisibility(View.VISIBLE);
             Toast.makeText(ReportActivity.this, "Report generation started.", Toast.LENGTH_SHORT).show();
         }
 
@@ -497,6 +499,7 @@ public class ReportActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
+            progressBarPDF.setVisibility(View.GONE);
             if(success)
             {
                 Toast.makeText(ReportActivity.this, "Report generation complete! File saved at "+fileReport.getAbsolutePath()
