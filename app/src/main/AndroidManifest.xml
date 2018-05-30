@@ -19,7 +19,8 @@
         android:icon="@drawable/logo"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        android:screenOrientation="portrait">
 
         <activity android:name=".Activities.StartingActivity">
             <intent-filter>

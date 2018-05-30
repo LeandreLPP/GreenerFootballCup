@@ -48,7 +48,7 @@ public class TeamActivity extends AppCompatActivity{
 
     private MediaPlayer mMediaPlayer;
 
-    private String url = "http://teamplaycup.se/cup/?team&home=kurirenspelen/17&scope=A-2&name=Notvikens%20IK" ;
+    private String url ;
     private ListView playerList;
     private Player[] players;
     private PlayerAdapter playerAdapter;
@@ -306,6 +306,9 @@ public class TeamActivity extends AppCompatActivity{
         dialog.setOnShowListener(dialogInterface -> {
             Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(view1 -> {
+                LoginDatas.getInstance().setAgeThreshold(Integer.parseInt( edt_max_age.getText().toString()));
+                LoginDatas.getInstance().setMaxPlayer(Integer.parseInt( edt_max_number_player.getText().toString()));
+                LoginDatas.getInstance().setMaxOveragedPlayer(Integer.parseInt( edt_max_overaged_player.getText().toString()));
                 dialog.dismiss();
             });
         });
