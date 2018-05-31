@@ -58,7 +58,7 @@
 
     <string name="edt_max_number_player">Max. players</string>
     <string name="edt_max_overaged_player">Max. overaged players</string>
-    <string name="edt_max_age">Max. birthDateString</string>
+    <string name="edt_max_age">Max. age</string>
     <string name="disable">Disable</string>
     <string name="enable">Enable</string>
 
