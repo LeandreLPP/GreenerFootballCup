@@ -61,14 +61,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/team2"
+            android:id="@+id/team1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Register players of " />
 
         <Button
-            android:id="@+id/team1"
+            android:id="@+id/team2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
