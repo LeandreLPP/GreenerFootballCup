@@ -1,10 +1,9 @@
 package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import java.util.Calendar;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,12 +33,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        admin_code = (EditText) findViewById(R.id.admin_code);
-        admin_email = (EditText) findViewById(R.id.admin_email);
-        confirm_admin_email = (EditText) findViewById(R.id.confirm_admin_email);
-        current_year = (EditText) findViewById(R.id.current_year);
-        btnToScreen3 = (Button) findViewById(R.id.btnToScreen3);
-        confirm_admin_code = (EditText) findViewById(R.id.confirm_admin_code);
+        admin_code = findViewById(R.id.admin_code);
+        admin_email = findViewById(R.id.admin_email);
+        confirm_admin_email = findViewById(R.id.confirm_admin_email);
+        current_year = findViewById(R.id.current_year);
+        btnToScreen3 = findViewById(R.id.btnToScreen3);
+        confirm_admin_code = findViewById(R.id.confirm_admin_code);
 
         current_year.addTextChangedListener(new TextWatcher() {
             @Override
@@ -65,12 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         current_year.setKeyListener(null);
         //Open a date picker to choose the current year
-        current_year.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openYearPicker();
-            }
-        });
+        current_year.setOnClickListener(v -> openYearPicker());
 
         admin_code.addTextChangedListener(new TextWatcher() {
             @Override
@@ -217,13 +210,11 @@ public class LoginActivity extends AppCompatActivity {
 
     //Check if every informatino has been completed
     public boolean isLoggedIn() {
-        CharSequence t = confirm_admin_email.getError();
-        if (!admin_code.getText().toString().equals("") && confirm_admin_code.getError() == null &&
-            confirm_admin_email.getError() == null &&
-            !confirm_admin_email.getText().toString().equals("") &&
-            !current_year.getText().toString().equals(""))
-            return true;
-        return false;
+        return !admin_code.getText().toString().equals("") &&
+               confirm_admin_code.getError() == null &&
+               confirm_admin_email.getError() == null &&
+               !confirm_admin_email.getText().toString().equals("") &&
+               !current_year.getText().toString().equals("");
     }
 
     public void openYearPicker() {
@@ -232,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.number_picker, null);
 
         //Setup the number picker since 2000 to the current year
-        NumberPicker np = (NumberPicker) view.findViewById(R.id.numberPicker);
+        NumberPicker np = view.findViewById(R.id.numberPicker);
         String[] years = getYears(minYear, Calendar.getInstance().get(Calendar.YEAR));
         np.setDisplayedValues(years);
         np.setMaxValue(years.length - 1);
@@ -246,18 +237,16 @@ public class LoginActivity extends AppCompatActivity {
         //Setup the buttons
         dialog.setOnShowListener(dialogInterface -> {
 
-            Button btnPositive = ((android.app.AlertDialog) dialog)
+            Button btnPositive = dialog
                     .getButton(android.app.AlertDialog.BUTTON_POSITIVE);
             btnPositive.setOnClickListener(v -> {
                 current_year.setText(String.valueOf(years[np.getValue()]));
                 dialog.dismiss();
             });
 
-            Button btnNegative = ((android.app.AlertDialog) dialog)
+            Button btnNegative = dialog
                     .getButton(AlertDialog.BUTTON_NEGATIVE);
-            btnNegative.setOnClickListener(v -> {
-                dialog.dismiss();
-            });
+            btnNegative.setOnClickListener(v -> dialog.dismiss());
         });
         dialog.show();
     }
@@ -265,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
     //Return a string array containing all the years since 2000 to the current year
     public String[] getYears(int minimumInclusive, int maximumInclusive) {
 
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
 
         for (int i = maximumInclusive; i >= minimumInclusive; i--)
         {

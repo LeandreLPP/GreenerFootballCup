@@ -18,9 +18,10 @@ public class RequirePermissionDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.need_internet_message)
-                .setPositiveButton(R.string.ok, (dialog, id) -> ActivityCompat.requestPermissions(
-                        getActivity(),
-                        new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_READ_CONTACTS));
+               .setPositiveButton(R.string.ok, (dialog, id) -> ActivityCompat.requestPermissions(
+                       getActivity(),
+                       new String[]{Manifest.permission.INTERNET},
+                       MY_PERMISSIONS_REQUEST_READ_CONTACTS));
         // Create the AlertDialog object and return it
         return builder.create();
     }

@@ -36,26 +36,18 @@ public class ConfirmationDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setMessage(args.getInt(ARG_MESSAGE))
                 .setPositiveButton(android.R.string.ok,
-                                   new DialogInterface.OnClickListener() {
-                                       @Override
-                                       public void onClick(DialogInterface dialog, int which) {
-                                           String[] permissions = args.getStringArray(ARG_PERMISSIONS);
-                                           if (permissions == null) {
-                                               throw new IllegalArgumentException();
-                                           }
-                                           ActivityCompat.requestPermissions(getActivity(),
-                                                                             permissions, args.getInt(ARG_REQUEST_CODE));
+                                   (dialog, which) -> {
+                                       String[] permissions = args.getStringArray(ARG_PERMISSIONS);
+                                       if (permissions == null) {
+                                           throw new IllegalArgumentException();
                                        }
+                                       ActivityCompat.requestPermissions(getActivity(),
+                                                                         permissions, args.getInt(ARG_REQUEST_CODE));
                                    })
                 .setNegativeButton(android.R.string.cancel,
-                                   new DialogInterface.OnClickListener() {
-                                       @Override
-                                       public void onClick(DialogInterface dialog, int which) {
-                                           Toast.makeText(getActivity(),
-                                                          args.getInt(ARG_NOT_GRANTED_MESSAGE),
-                                                          Toast.LENGTH_SHORT).show();
-                                       }
-                                   })
+                                   (dialog, which) -> Toast.makeText(getActivity(),
+                                                  args.getInt(ARG_NOT_GRANTED_MESSAGE),
+                                                  Toast.LENGTH_SHORT).show())
                 .create();
     }
 }

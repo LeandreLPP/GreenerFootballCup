@@ -8,7 +8,6 @@ import com.cete.dynamicpdf.PageOrientation;
 import com.cete.dynamicpdf.PageSize;
 import com.cete.dynamicpdf.TextAlign;
 import com.cete.dynamicpdf.VAlign;
-import com.cete.dynamicpdf.pageelements.Cell2;
 import com.cete.dynamicpdf.pageelements.Image;
 import com.cete.dynamicpdf.pageelements.Label;
 import com.cete.dynamicpdf.pageelements.Row2;
@@ -121,7 +120,7 @@ public abstract class ReportGenerator {
             if(teamA.getNumberPlayer() > i)
             {
                 row2.getCells().add(teamA.getPlayers().get(i).getName());
-                row2.getCells().add(teamA.getPlayers().get(i).getAge());
+                row2.getCells().add(teamA.getPlayers().get(i).getBirthDateString());
             }
             else
             {
@@ -132,7 +131,7 @@ public abstract class ReportGenerator {
             if(teamB.getNumberPlayer() > i)
             {
                 row2.getCells().add(teamB.getPlayers().get(i).getName());
-                row2.getCells().add(teamB.getPlayers().get(i).getAge());
+                row2.getCells().add(teamB.getPlayers().get(i).getBirthDateString());
             }
             else
             {
@@ -192,7 +191,7 @@ public abstract class ReportGenerator {
                 if(teamA.getNumberPlayer() > i)
                 {
                     row22.getCells().add(teamA.getPlayers().get(i).getName());
-                    row22.getCells().add(teamA.getPlayers().get(i).getAge());
+                    row22.getCells().add(teamA.getPlayers().get(i).getBirthDateString());
                 }
                 else
                 {
@@ -203,7 +202,7 @@ public abstract class ReportGenerator {
                 if(teamB.getNumberPlayer() > i)
                 {
                     row22.getCells().add(teamB.getPlayers().get(i).getName());
-                    row22.getCells().add(teamB.getPlayers().get(i).getAge());
+                    row22.getCells().add(teamB.getPlayers().get(i).getBirthDateString());
                 }
                 else
                 {

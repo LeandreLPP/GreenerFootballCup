@@ -79,13 +79,13 @@ public class ReportActivity extends AppCompatActivity {
 
         hasAuthorisations = false;
 
-        imageViewResult = (ImageView) findViewById(R.id.imageViewResult);
-        imageViewFairplay = (ImageView) findViewById(R.id.imageViewFairplay);
-        imageViewReport = (PDFView) findViewById(R.id.imageViewReport);
+        imageViewResult = findViewById(R.id.imageViewResult);
+        imageViewFairplay = findViewById(R.id.imageViewFairplay);
+        imageViewReport = findViewById(R.id.imageViewReport);
 
-        progressBarResult = (ProgressBar) findViewById(R.id.progressBarResult);
-        progressBarFairplay = (ProgressBar) findViewById(R.id.progressBarFairplay);
-        progressBarPDF = (ProgressBar) findViewById(R.id.progressBarPDF);
+        progressBarResult = findViewById(R.id.progressBarResult);
+        progressBarFairplay = findViewById(R.id.progressBarFairplay);
+        progressBarPDF = findViewById(R.id.progressBarPDF);
 
         File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -107,10 +107,10 @@ public class ReportActivity extends AppCompatActivity {
         new LoadImage().execute(new Param(fileImgResult, imageViewResult, progressBarResult));
         new LoadImage().execute(new Param(fileImgFairplay, imageViewFairplay, progressBarFairplay));
 
-        buttonSendReport = (Button) findViewById(R.id.buttonSendReport);
+        buttonSendReport = findViewById(R.id.buttonSendReport);
         buttonSendReport.setOnClickListener((c)->sendReport());
         buttonSendReport.setEnabled(false);
-        buttonPreviewReport = (Button) findViewById(R.id.buttonPreviewReport);
+        buttonPreviewReport = findViewById(R.id.buttonPreviewReport);
         buttonPreviewReport.setOnClickListener((c)->openPopupReport());
         buttonPreviewReport.setEnabled(false);
         checkReportCompleteAndGenerate();
@@ -164,10 +164,7 @@ public class ReportActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSIONS:
-                hasAuthorisations = true;
-                if (grantResults.length <= 0) {
-                    hasAuthorisations = false;
-                }
+                hasAuthorisations = grantResults.length > 0;
                 for(int result : grantResults)
                     if(result != PackageManager.PERMISSION_GRANTED)
                         hasAuthorisations = false;
@@ -187,9 +184,9 @@ public class ReportActivity extends AppCompatActivity {
                                       WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
 
-        Button retake_picture = (Button) popupView.findViewById(R.id.buttonRetakePicture);
-        ImageView imageView = (ImageView) popupView.findViewById(R.id.imageView);
-        ProgressBar progressBar = (ProgressBar) popupView.findViewById(R.id.progressBar);
+        Button retake_picture = popupView.findViewById(R.id.buttonRetakePicture);
+        ImageView imageView = popupView.findViewById(R.id.imageView);
+        ProgressBar progressBar = popupView.findViewById(R.id.progressBar);
 
         new LoadImage().execute(new Param(imgFile, imageView, progressBar));
 
@@ -206,9 +203,9 @@ public class ReportActivity extends AppCompatActivity {
                                       WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
 
-        PDFView pdfView = (PDFView) popupView.findViewById(R.id.pdfView);
-        Button buttonRegen = (Button) popupView.findViewById(R.id.buttonRegenerate);
-        TextView textViewPath = (TextView) popupView.findViewById(R.id.textViewPath);
+        PDFView pdfView = popupView.findViewById(R.id.pdfView);
+        Button buttonRegen = popupView.findViewById(R.id.buttonRegenerate);
+        TextView textViewPath = popupView.findViewById(R.id.textViewPath);
 
         buttonRegen.setOnClickListener((c) -> {
             new GenerateReportTask().execute();
@@ -314,7 +311,7 @@ public class ReportActivity extends AppCompatActivity {
         public File imageFile;
         public ImageView imgToLoad;
         public ProgressBar progressBar;
-        public Param(File f, ImageView v, ProgressBar b)
+        Param(File f, ImageView v, ProgressBar b)
         {
             imageFile = f;
             imgToLoad = v;
@@ -326,7 +323,7 @@ public class ReportActivity extends AppCompatActivity {
 
         private Callback callback;
 
-        public RotateAndSaveFile setCallback(Callback callback)
+        RotateAndSaveFile setCallback(Callback callback)
         {
             this.callback = callback;
             return this;
@@ -353,7 +350,7 @@ public class ReportActivity extends AppCompatActivity {
                                                      ExifInterface.ORIENTATION_UNDEFINED);
 
                 if(orientation == ExifInterface.ORIENTATION_ROTATE_180)
-                    bmp = rotateImage(bmp, 180);
+                    bmp = rotateImage(bmp);
 
                 FileOutputStream fos = new FileOutputStream(imageFile);
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -375,9 +372,9 @@ public class ReportActivity extends AppCompatActivity {
                 callback.execute();
         }
 
-        private Bitmap rotateImage(Bitmap source, float angle) {
+        private Bitmap rotateImage(Bitmap source) {
             Matrix matrix = new Matrix();
-            matrix.postRotate(angle);
+            matrix.postRotate((float) 180);
             return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                                        matrix, true);
         }
@@ -529,9 +526,8 @@ public class ReportActivity extends AppCompatActivity {
         File ret = new File(Environment.getExternalStorageDirectory(), "GreenerFootballCup");
         if(!ret.exists() || !ret.isDirectory())
         {
-            boolean deleted = ret.delete();
-            boolean maked = ret.mkdir();
-            boolean izok = deleted || maked;
+            ret.delete();
+            ret.mkdir();
         }
         return ret;
     }

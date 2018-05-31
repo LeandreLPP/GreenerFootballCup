@@ -10,12 +10,12 @@ import java.util.Locale;
 public class Player {
 
     private String name;
-    private String age;
+    private String birthDateString;
     private boolean selected;
 
-    public Player(String name, String age) {
+    public Player(String name, String birthDateString) {
         this.name = name;
-        this.age = age;
+        this.birthDateString = birthDateString;
         selected = false;
     }
 
@@ -23,16 +23,16 @@ public class Player {
         return name;
     }
 
-    public String getAge(){
-        return age;
+    public String getBirthDateString(){
+        return birthDateString;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setAge(String age){
-        this.age = age;
+    public void setBirthDateString(String birthDateString){
+        this.birthDateString = birthDateString;
     }
 
     public boolean isSelected() {
@@ -46,13 +46,13 @@ public class Player {
     public Date getDateOfBirth(){
         Date now = Calendar.getInstance().getTime();
         Date d = now;
-        if(age != null && age.length() == 4)
+        if(birthDateString != null && birthDateString.length() == 4)
         {
             DateFormat format = new SimpleDateFormat("yyMM", Locale.getDefault());
             boolean correct = false;
             try
             {
-                 d = format.parse(age);
+                 d = format.parse(birthDateString);
                 correct = true;
             }
             catch (ParseException e)
@@ -64,7 +64,7 @@ public class Player {
                 DateFormat format2 = new SimpleDateFormat("yyyy", Locale.getDefault());
                 try
                 {
-                    d = format2.parse(age);
+                    d = format2.parse(birthDateString);
                 }
                 catch (ParseException e)
                 {

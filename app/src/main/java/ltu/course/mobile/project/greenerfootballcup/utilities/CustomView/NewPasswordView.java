@@ -1,16 +1,11 @@
 package ltu.course.mobile.project.greenerfootballcup.utilities.CustomView;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import ltu.course.mobile.project.greenerfootballcup.R;

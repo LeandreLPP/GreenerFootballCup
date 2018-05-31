@@ -2,19 +2,14 @@ package ltu.course.mobile.project.greenerfootballcup.utilities.CustomView;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TableLayout;
-import android.widget.ToggleButton;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 
 public class ConfigurationView extends TableLayout {
 
-    ToggleButton toggle_max_overaged_player;
-    ToggleButton toggle_max_number_player;
     EditText edt_max_age;
     EditText edt_max_overaged_player;
     EditText edt_max_number_player;

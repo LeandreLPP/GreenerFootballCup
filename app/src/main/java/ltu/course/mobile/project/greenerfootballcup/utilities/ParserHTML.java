@@ -1,6 +1,5 @@
 package ltu.course.mobile.project.greenerfootballcup.utilities;
 
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,24 +19,14 @@ import java.util.Set;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
 
-
 public class ParserHTML {
     private static final String beginningURL = "http://www.teamplaycup.se/cup/?games&home=kurirenspelen/";
     private static final String endURL = "&scope=all&field=";
-    private static final String arenaArg = "&arena=";
 
-    public static String getURLofAllMatches(Date year)
-    {
+    public static String getURLofAllMatches(Date year) {
         DateFormat format = new SimpleDateFormat("yy", Locale.getDefault());
         String yearStr = format.format(year);
         return beginningURL + yearStr + endURL;
-    }
-
-    public static String getURLwithField(Date year, Field field)
-    {
-        DateFormat format = new SimpleDateFormat("yy", Locale.getDefault());
-        String yearStr = format.format(year);
-        return beginningURL + yearStr + arenaArg + field.getUrlArgument() + endURL;
     }
 
     public static Document getHTMLDocument(String url) throws IOException {
@@ -50,51 +39,47 @@ public class ParserHTML {
         for (Element aHeader : allAheaders)
         {
             String address = aHeader.attr("href");
-            if(address != null && address.contains("&arena="))
+            if (address != null && address.contains("&arena="))
             {
-                int beginning = address.indexOf("&arena=")+7;
+                int beginning = address.indexOf("&arena=") + 7;
                 address = address.substring(beginning, address.indexOf("&", beginning));
                 addresses.add(address);
             }
         }
         List<Field> list = new ArrayList<>();
-        for(String s : addresses)
+        for (String s : addresses)
             list.add(new Field(s));
         return list.toArray(new Field[list.size()]);
     }
 
-    public static void extractMatches(Document htmlDoc) {
-
-    }
-
-    public class WrongDocumentException extends Exception {
-    }
-
-    public static Player[] extractPlayers(Document html) throws WrongDocumentException{
+    public static Player[] extractPlayers(Document html) {
         Player[] players;
 
         //Get all hearders
         Elements allH3headers = html.select("h3");
         Element playerHeader = null;
         //Find the right header
-        for (Element header : allH3headers) {
-            if (header.text().equals("Spelare")) {
+        for (Element header : allH3headers)
+        {
+            if (header.text().equals("Spelare"))
+            {
                 playerHeader = header;
                 break;
             }
         }
 
         //Get all the players
-        Elements tablePlayers = playerHeader.nextElementSibling().select("table").select("tbody").select("tr");
+        Elements tablePlayers = playerHeader.nextElementSibling().select("table").select("tbody")
+                                            .select("tr");
 
         players = new Player[tablePlayers.size()];
         //Parse name and age
-        for (int i = 0 ; i < tablePlayers.size();i++) {
+        for (int i = 0; i < tablePlayers.size(); i++)
+        {
             Elements data = tablePlayers.get(i).select("td");
             players[i] = new Player(data.get(0).text(), data.get(1).text());
         }
 
         return players;
-
     }
 }

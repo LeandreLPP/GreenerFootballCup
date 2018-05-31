@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,7 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,7 +29,6 @@ import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Match;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
@@ -46,11 +43,8 @@ public class MatchActivity extends AppCompatActivity {
     private Button registerTeam2;
     private Button registerResult;
     private TextView title;
-    private Document HTMLdocument;
-    private String url = "";
     private String fieldArg;
-    private String Fieldname;
-    private static MatchAdapter adapter;
+    private String fieldName;
     private Match selectedMatch;
     private LoadingView loadingView;
     private Handler handlerActivity;
@@ -62,20 +56,20 @@ public class MatchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match);
 
-        title = (TextView) findViewById(R.id.title);
+        title = findViewById(R.id.title);
         fieldArg = getIntent().getStringExtra(FieldActivity.FIELD_ARGUMENT_ID);
 
         matchList = new ArrayList<>();
-        matchListView = (ListView) findViewById(R.id.matches);
-        View header = (View)getLayoutInflater().inflate(R.layout.match_list_header,null);
+        matchListView = findViewById(R.id.matches);
+        View header = getLayoutInflater().inflate(R.layout.match_list_header, null);
         matchListView.addHeaderView(header);
         matchListView.setVisibility(View.INVISIBLE);
         handlerActivity = new Handler();
         selectedMatch = null;
 
-        registerTeam1 = (Button) findViewById(R.id.team1);
-        registerTeam2 = (Button) findViewById(R.id.team2);
-        registerResult = (Button) findViewById(R.id.register);
+        registerTeam1 = findViewById(R.id.team1);
+        registerTeam2 = findViewById(R.id.team2);
+        registerResult = findViewById(R.id.register);
 
         loadingView = findViewById(R.id.loadingMatchView);
         loadingView.setMaxProgress(3);
@@ -83,47 +77,35 @@ public class MatchActivity extends AppCompatActivity {
         final fillList fillMatchList = new fillList();
         fillMatchList.execute();
 
-        //TODO: if team configured, disable button
-        registerTeam1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedMatch != null)
-                {
-                    Intent intent = new Intent(getApplicationContext(), TeamActivity.class);
-                    intent.putExtra(TEAM_URL, selectedMatch.getFirstTeamURL());
-                    intent.putExtra(CODE_TEAM, CODE_TEAM_A);
-                    startActivityForResult(intent, CODE_TEAM_A);
-                }
+        registerTeam1.setOnClickListener(v -> {
+            if (selectedMatch != null)
+            {
+                Intent intent = new Intent(getApplicationContext(), TeamActivity.class);
+                intent.putExtra(TEAM_URL, selectedMatch.getFirstTeamURL());
+                intent.putExtra(CODE_TEAM, CODE_TEAM_A);
+                startActivityForResult(intent, CODE_TEAM_A);
             }
         });
         registerTeam1.setEnabled(false);
 
-        //TODO: if team configured, disable button
-        registerTeam2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedMatch != null)
-                {
-                    Intent intent = new Intent(getApplicationContext(), TeamActivity.class);
-                    //passing the whole URL of the selected team
-                    intent.putExtra(TEAM_URL, selectedMatch.getSecondTeamURL());
-                    intent.putExtra(CODE_TEAM, CODE_TEAM_B);
-                    startActivityForResult(intent, CODE_TEAM_B);
-                }
+        registerTeam2.setOnClickListener(v -> {
+            if (selectedMatch != null)
+            {
+                Intent intent = new Intent(getApplicationContext(), TeamActivity.class);
+                //passing the whole URL of the selected team
+                intent.putExtra(TEAM_URL, selectedMatch.getSecondTeamURL());
+                intent.putExtra(CODE_TEAM, CODE_TEAM_B);
+                startActivityForResult(intent, CODE_TEAM_B);
             }
         });
         registerTeam2.setEnabled(false);
 
-        //TODO: what information to pass to the next activity ?
-        registerResult.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
-                MatchData.getInstance().setField(new Field(fieldArg));
-                MatchData.getInstance().setMatch(selectedMatch);
+        registerResult.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+            MatchData.getInstance().setField(new Field(fieldArg));
+            MatchData.getInstance().setMatch(selectedMatch);
 
-                startActivity(intent);
-            }
+            startActivity(intent);
         });
         registerResult.setEnabled(false);
     }
@@ -149,20 +131,17 @@ public class MatchActivity extends AppCompatActivity {
             {
                 DateFormat format = new SimpleDateFormat("yy", Locale.getDefault());
                 String yearStr = format.format(LoginDatas.getInstance().getYear());
-                url = ("http://www.teamplaycup.se/cup/?games&home=kurirenspelen/" + yearStr + "&scope=all&arena=" + fieldArg + "&field=");
+                String url = ("http://www.teamplaycup.se/cup/?games&home=kurirenspelen/" + yearStr +
+                              "&scope=all&arena=" + fieldArg + "&field=");
                 publishProgress(0);
-                handlerActivity.post(() -> {
-                    Utilities.checkInternetConnection(MatchActivity.this);
-                });
+                handlerActivity.post(() -> Utilities.checkInternetConnection(MatchActivity.this));
                 publishProgress(1);
-                HTMLdocument = ParserHTML.getHTMLDocument(url);
+                Document htmlDocument = ParserHTML.getHTMLDocument(url);
                 publishProgress(2);
-                Elements content = HTMLdocument.select("h4");
-                Element matchNode = null;
+                Elements content = htmlDocument.select("h4");
 
-                for (Element node : content)
+                for (Element matchNode : content)
                 {
-                    matchNode = node;
                     Elements game = matchNode.nextElementSibling().select("table").select("tbody")
                                              .select("tr");
                     for (Element gameNode : game)
@@ -183,7 +162,7 @@ public class MatchActivity extends AppCompatActivity {
                 //get name of field
                 Document html = ParserHTML.getHTMLDocument(url);
                 Elements e = html.select("h2");
-                Fieldname = e.text();
+                fieldName = e.text();
             }
             catch (IOException e)
             {
@@ -195,31 +174,28 @@ public class MatchActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Utilities.Result result) {
-            title.setText(Fieldname);
+            title.setText(fieldName);
 
 
             if (result.success) {
-                title.setText(Fieldname);
-                adapter = new MatchAdapter(matchList, getApplicationContext());
+                title.setText(fieldName);
+                MatchAdapter adapter = new MatchAdapter(matchList, getApplicationContext());
                 matchListView.setAdapter(adapter);
                 //display to be configured teams on buttons
-                matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if(position <= 0) return;
-                        Match xMatch = matchList.get(position - 1);
+                matchListView.setOnItemClickListener((parent, view, position, id) -> {
+                    if(position <= 0) return;
+                    Match xMatch = matchList.get(position - 1);
 
-                        registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
-                        registerTeam1.setEnabled(true);
-                        registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
-                        registerTeam2.setEnabled(true);
-                        selectedMatch = xMatch;
-                        MatchData.getInstance().setTeamA(null);
-                        MatchData.getInstance().setTeamB(null);
-                        MatchData.getInstance().setSignatureTeamA(null);
-                        MatchData.getInstance().setSignatureTeamB(null);
-                        checkTeamConfigured();
-                    }
+                    registerTeam1.setText("Register players of team: \n" + xMatch.getFirstTeam());
+                    registerTeam1.setEnabled(true);
+                    registerTeam2.setText("Register players of team: \n" + xMatch.getSecondTeam());
+                    registerTeam2.setEnabled(true);
+                    selectedMatch = xMatch;
+                    MatchData.getInstance().setTeamA(null);
+                    MatchData.getInstance().setTeamB(null);
+                    MatchData.getInstance().setSignatureTeamA(null);
+                    MatchData.getInstance().setSignatureTeamB(null);
+                    checkTeamConfigured();
                 });
 
                 matchListView.setVisibility(View.VISIBLE);

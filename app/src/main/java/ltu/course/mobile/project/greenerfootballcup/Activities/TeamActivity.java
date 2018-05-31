@@ -2,14 +2,11 @@ package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -33,18 +30,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.ConfigurationView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.DrawingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 import ltu.course.mobile.project.greenerfootballcup.utilities.MatchData;
-import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Player;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Adapter.PlayerAdapter;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Team;
+import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class TeamActivity extends AppCompatActivity{
 
@@ -53,10 +48,7 @@ public class TeamActivity extends AppCompatActivity{
     private String url ;
     private ListView playerList;
     private Player[] players;
-    private PlayerAdapter playerAdapter;
-    private Button btnConfirm;
     private ImageView preview_signature;
-    private Button btnAdminAccess;
     private LoadingView loadingView;
 
     private Handler handlerActivity;
@@ -86,16 +78,16 @@ public class TeamActivity extends AppCompatActivity{
         noMaxPlayer = false;
         signed = false;
 
-        playerList = (ListView)findViewById(R.id.players);
+        playerList = findViewById(R.id.players);
         playerList.setVisibility(View.INVISIBLE);
-        preview_signature = (ImageView) findViewById(R.id.preview_signature);
-        btnConfirm = (Button)findViewById(R.id.btnConfirm);
-        btnAdminAccess = (Button)findViewById(R.id.btnAdminAccess);
+        preview_signature = findViewById(R.id.preview_signature);
+        Button btnConfirm = findViewById(R.id.btnConfirm);
+        Button btnAdminAccess = findViewById(R.id.btnAdminAccess);
         loadingView = findViewById(R.id.loadingView);
         loadingView.setMaxProgress(3);
         handlerActivity = new Handler();
 
-        View header = (View)getLayoutInflater().inflate(R.layout.player_list_header,null);
+        View header = getLayoutInflater().inflate(R.layout.player_list_header, null);
         playerList.addHeaderView(header);
 
 
@@ -154,32 +146,27 @@ public class TeamActivity extends AppCompatActivity{
         popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
 
-        Button reset_signature = (Button)popupView.findViewById(R.id.reset_signature);
-        Button confirm_signature = (Button)popupView.findViewById(R.id.confirm_signature);
-        final DrawingView drawingView =(DrawingView)popupView.findViewById(R.id.signature);
+        Button reset_signature = popupView.findViewById(R.id.reset_signature);
+        Button confirm_signature = popupView.findViewById(R.id.confirm_signature);
+        final DrawingView drawingView = popupView.findViewById(R.id.signature);
 
-        confirm_signature.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                try{
-                    Bitmap bitmap = drawingView.getBitmap();
-                    saveSignature(bitmap);
-                    preview_signature.setImageBitmap(bitmap);
-                    popupWindow.dismiss();
-                    popupWindow=null;
-                }catch (DrawingView.NullSignatureException e){
-                    Toast.makeText(getApplicationContext(), R.string.notSigned, Toast.LENGTH_SHORT).show();
-                    signed = false;
-                }
-
-            }});
-
-        reset_signature.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawingView.clearDrawing();
+        confirm_signature.setOnClickListener(v -> {
+            try{
+                Bitmap bitmap = drawingView.getBitmap();
+                saveSignature(bitmap);
+                preview_signature.setImageBitmap(bitmap);
+                popupWindow.dismiss();
+                popupWindow=null;
+            }catch (DrawingView.NullSignatureException e){
+                Toast.makeText(getApplicationContext(), R.string.notSigned, Toast.LENGTH_SHORT).show();
                 signed = false;
             }
+
+        });
+
+        reset_signature.setOnClickListener(v -> {
+            drawingView.clearDrawing();
+            signed = false;
         });
 
         popupWindow.showAtLocation(this.preview_signature, Gravity.CENTER,0,0);
@@ -219,7 +206,7 @@ public class TeamActivity extends AppCompatActivity{
         LayoutInflater layoutInflater = this.getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.verify_password_view, null);
 
-        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
+        EditText password = view.findViewById(R.id.et_verify_password);
 
         password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -247,7 +234,7 @@ public class TeamActivity extends AppCompatActivity{
 
         dialog.setOnShowListener(dialogInterface -> {
 
-            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            Button button = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(view1 -> {
                 if(password.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
                     dialog.dismiss();
@@ -306,7 +293,7 @@ public class TeamActivity extends AppCompatActivity{
                 .create();
 
         dialog.setOnShowListener(dialogInterface -> {
-            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            Button button = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(view1 -> {
                 LoginDatas.getInstance().setAgeThreshold(Integer.parseInt( edt_max_age.getText().toString()));
                 LoginDatas.getInstance().setMaxPlayer(Integer.parseInt( edt_max_number_player.getText().toString()));
@@ -336,9 +323,7 @@ public class TeamActivity extends AppCompatActivity{
             result.success = false;
             try {
                 publishProgress(0);
-                handlerActivity.post(() -> {
-                    Utilities.checkInternetConnection(TeamActivity.this);
-                });
+                handlerActivity.post(() -> Utilities.checkInternetConnection(TeamActivity.this));
                 publishProgress(1);
                 Document html = ParserHTML.getHTMLDocument(url);
                 publishProgress(2);
@@ -360,7 +345,8 @@ public class TeamActivity extends AppCompatActivity{
         @Override
         protected void onPostExecute(Utilities.Result result) {
             if (result.success) {
-                playerAdapter = new PlayerAdapter(getApplicationContext(), players, team);
+                PlayerAdapter playerAdapter = new PlayerAdapter(getApplicationContext(), players,
+                                                                team);
                 playerList.setAdapter(playerAdapter);
                 playerList.setVisibility(View.VISIBLE);
                 loadingView.setVisibility(View.INVISIBLE);

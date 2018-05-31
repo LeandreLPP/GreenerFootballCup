@@ -1,12 +1,9 @@
 package ltu.course.mobile.project.greenerfootballcup.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,13 +17,12 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import ltu.course.mobile.project.greenerfootballcup.R;
-import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.CustomView.LoadingView;
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
+import ltu.course.mobile.project.greenerfootballcup.utilities.Model.Field;
 import ltu.course.mobile.project.greenerfootballcup.utilities.ParserHTML;
 import ltu.course.mobile.project.greenerfootballcup.utilities.Utilities;
 
@@ -63,13 +59,12 @@ public class FieldActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         openVerifyPassword();
-        return;
     }
 
     /**
      * Use to back to the previous activity
      */
-    public void backToPreviousActivity(){
+    public void backToPreviousActivity() {
         finish();
     }
 
@@ -124,12 +119,13 @@ public class FieldActivity extends AppCompatActivity {
      */
     public static List<List<Field>> sortAndSplitFieldList(Field[] fields) {
         List<Field> firstSort = new ArrayList<>();
-        for(Field f : fields)
+        for (Field f : fields)
         {
             int i = 0;
-            while(i<firstSort.size() && f.getFullName().compareTo(firstSort.get(i).getFullName()) > 0)
+            while (i < firstSort.size() &&
+                   f.getFullName().compareTo(firstSort.get(i).getFullName()) > 0)
                 i++;
-            firstSort.add(i,f);
+            firstSort.add(i, f);
         }
 
         List<List<Field>> ret = new ArrayList<>();
@@ -149,7 +145,6 @@ public class FieldActivity extends AppCompatActivity {
         }
         return ret;
     }
-
 
     private class LoadViewAsyncTask extends AsyncTask<Void, Integer, Utilities.Result> {
         private List<List<Field>> fieldList;
@@ -172,14 +167,15 @@ public class FieldActivity extends AppCompatActivity {
             try
             {
                 publishProgress(0);
-                handlerActivity.post(() -> { Utilities.checkInternetConnection(FieldActivity.this); });
+                handlerActivity
+                        .post(() -> Utilities.checkInternetConnection(FieldActivity.this));
                 publishProgress(1);
                 String docUrl = ParserHTML.getURLofAllMatches(LoginDatas.getInstance().getYear());
                 publishProgress(2);
                 Document allMatchesPage = ParserHTML.getHTMLDocument(docUrl);
                 publishProgress(3);
                 Field[] fields = ParserHTML.extractFields(allMatchesPage);
-                if(fields.length <= 0)
+                if (fields.length <= 0)
                 {
                     result.errorMessage = getString(R.string.no_field_error);
                     return result;
@@ -208,9 +204,11 @@ public class FieldActivity extends AppCompatActivity {
                 loadingView.setVisibility(View.INVISIBLE);
                 fieldGridLayout.setVisibility(View.VISIBLE);
             }
-            else{
+            else
+            {
                 loadingView.displayError(result.errorMessage);
-                loadingView.setOnClickListener((c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
+                loadingView.setOnClickListener(
+                        (c) -> (FieldActivity.this.task = new LoadViewAsyncTask()).execute());
             }
         }
 
@@ -219,20 +217,17 @@ public class FieldActivity extends AppCompatActivity {
             super.onCancelled();
             loadingView.displayError(getString(R.string.loading_failed));
         }
-
     }
-
 
     /**
      * Open a AlertDialog asking the user the admin code
      * If it's the right admin code, then the application go back to the Login Screen
-     *
      */
-    public void openVerifyPassword(){
+    public void openVerifyPassword() {
         LayoutInflater layoutInflater = this.getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.verify_password_view, null);
 
-        EditText password = (EditText)view.findViewById(R.id.et_verify_password);
+        EditText password = view.findViewById(R.id.et_verify_password);
 
         password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -242,7 +237,7 @@ public class FieldActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(password.getError() != null)
+                if (password.getError() != null)
                     password.setError(null);
             }
 
@@ -252,26 +247,28 @@ public class FieldActivity extends AppCompatActivity {
             }
         });
 
-
-        final android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this).setView(view)
+        final android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
+                .setView(view)
                 .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
         dialog.setOnShowListener(dialogInterface -> {
 
-            Button button = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            Button button = dialog
+                    .getButton(android.app.AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(view1 -> {
-                if(password.getText().toString().equals(LoginDatas.getInstance().getAdminCode())){
+                if (password.getText().toString().equals(LoginDatas.getInstance().getAdminCode()))
+                {
                     dialog.dismiss();
                     backToPreviousActivity();
                 }
-                else{
+                else
+                {
                     password.setError(getResources().getString(R.string.wrongAdminCode));
                 }
             });
         });
         dialog.show();
     }
-
 }

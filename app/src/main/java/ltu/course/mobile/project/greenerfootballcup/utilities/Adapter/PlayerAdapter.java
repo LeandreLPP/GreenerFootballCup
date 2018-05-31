@@ -81,7 +81,7 @@ public class PlayerAdapter extends BaseAdapter {
         Player currentPlayer = (Player)getItem(position);
 
         viewHolder.name.setText(currentPlayer.getName());
-        viewHolder.age.setText(currentPlayer.getAge());
+        viewHolder.age.setText(currentPlayer.getBirthDateString());
         viewHolder.checkbox.setTag(currentPlayer);
 
         viewHolder.checkbox.setChecked(currentPlayer.isSelected());

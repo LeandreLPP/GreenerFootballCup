@@ -1,18 +1,9 @@
 package ltu.course.mobile.project.greenerfootballcup.utilities.Model;
 
-import android.os.Build;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import ltu.course.mobile.project.greenerfootballcup.utilities.LoginDatas;
 
