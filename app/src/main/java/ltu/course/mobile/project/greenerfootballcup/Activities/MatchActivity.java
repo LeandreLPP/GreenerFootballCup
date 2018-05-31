@@ -1,6 +1,8 @@
 package ltu.course.mobile.project.greenerfootballcup.Activities;
 
 import android.content.Intent;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -245,10 +247,24 @@ public class MatchActivity extends AppCompatActivity {
 
     private void checkTeamConfigured() {
         MatchData ins = MatchData.getInstance();
-        boolean ok = ins.getTeamA() != null
-                     && ins.getTeamB() != null
-                     && ins.getSignatureTeamA() != null
-                     && ins.getSignatureTeamB() != null;
+
+        boolean teamAConfigured = ins.getTeamA() != null && ins.getSignatureTeamA() != null;
+        boolean teamBConfigured = ins.getTeamB() != null && ins.getSignatureTeamB() != null;
+
+        Drawable drawableOn;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+            drawableOn = getDrawable(R.drawable.success);
+        else
+            drawableOn = getResources().getDrawable(R.drawable.success);
+        drawableOn.setBounds(new Rect(0,0,50,50));
+        registerTeam1.setCompoundDrawables(null, null,
+                                                              teamAConfigured ? drawableOn : null,
+                                                              null);
+        registerTeam2.setCompoundDrawables(null, null,
+                                                              teamBConfigured ? drawableOn : null,
+                                                              null);
+
+        boolean ok = teamAConfigured && teamBConfigured;
         registerResult.setEnabled(ok);
     }
 }
